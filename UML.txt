@@ -1,0 +1,263 @@
+classDiagram
+    %% --- CORE & STATS ---
+    class Entity {
+        +float lifepoint
+        +int physicalDamage
+        +int physicalDefense
+        +int magicalDamage
+        +int speed
+        +int level
+        +TakeDamage(float damage)
+    }
+
+    class Utility {
+        <<static>>
+        +bool isUI
+        +TargetPos() Vector3
+    }
+
+    %% --- PLAYER SYSTEM ---
+    class PlayerDatas {
+        <<Singleton>>
+        +float health
+        +float mana
+        +float manaMax
+        +float jumpImpulse
+        +bool IsGrounded
+    }
+
+    class PlayerHandler {
+        -float health
+        -float mana
+        +UseMana(float amount) bool
+        +Damage(float amount)
+        +Heal(float amount)
+    }
+
+    class PlayerControls {
+        -Movement playerMovements
+        -Jump playerJump
+        -OnInventory()
+        -OnSpellBook()
+    }
+
+    class Movement {
+        -Vector2 moveInput
+        +HandleFixedUpdate()
+    }
+
+    class Jump {
+        -Rigidbody rb
+        +HandleFixedUpdate()
+    }
+
+    class DetectEnemies {
+        +Entity entity
+        +SetUp(StateManager manager)
+    }
+
+    PlayerControls --> Movement
+    PlayerControls --> Jump
+    PlayerHandler ..> PlayerDatas
+    DetectEnemies --|> MonoBehaviour
+    DetectEnemies --> Entity
+
+    %% --- ENEMY & AI ---
+    class Enemy {
+        +Entity entity
+        +State state
+        -AIDestinationSetter destinationSetter
+    }
+
+    class State {
+        <<ScriptableObject>>
+        +bool patrolling
+        +bool chasing
+        +bool attack
+    }
+
+    class StateManager {
+        -HashSet~Enemy~ activeEnemies
+        +AddChasingToList(Enemy enemy)
+        +RemoveChasingToList(Enemy enemy)
+    }
+
+    Enemy --> Entity
+    Enemy --> State
+    Enemy --> AIDestinationSetter : A* Pathfinding
+    StateManager --> Enemy
+    DetectEnemies ..> StateManager
+
+    %% --- SPELL SYSTEM (DATA & LOGIC) ---
+    class SpellData {
+        <<ScriptableObject>>
+        +string spellName
+        +SpellType spellType
+        +SpellForm form
+        +StatusEffectData statusEffect
+        +GameObject spellPrefab
+        +float manaCost
+        +float cooldown
+    }
+
+    class Spell {
+        -List~SpellInstance~ spellInstances
+        -float launchTimer
+        -SpellData activeSpell
+        -CastSpell(int index)
+        -SpawnSpell()
+    }
+
+    class SpellDeckHandler {
+        <<Singleton>>
+        +List~SpellData~ spellData
+        +SpellData activeSpell
+        +SetSpellDeck(int index, SpellData spell)
+    }
+
+    class SpellInstance {
+        +SpellForm form
+        +SpellType spellType
+        +SpellFormData stateData
+        +Initialize(SpellData data)
+        +Activate()
+        +ResetGO()
+    }
+
+    Spell --> SpellDeckHandler
+    Spell ..> SpellData
+    Spell --> SpellInstance : Spawns
+    SpellDeckHandler o-- SpellData
+    SpellInstance --> SpellData
+    SpellInstance --> SpellForm
+    SpellInstance --> SpellFormData
+
+    %% --- SPELL FORMS (STRATEGY PATTERN) ---
+    class SpellForm {
+        <<ScriptableObject>>
+        <<Abstract>>
+        +int numberOfProjectiles
+        +CreateFormData() SpellFormData*
+        +Initialize(SpellInstance instance, SpellData data)*
+        +HandleFixedUpdate(SpellInstance instance)*
+        +HandleCollision(SpellInstance instance, Transform col)*
+    }
+
+    class Projectile {
+        +float speed
+        +float damage
+    }
+
+    class Tornado {
+        +float speed
+        +float dps
+        +float attractiveForce
+    }
+
+    class AreaOfEffect {
+        +float duration
+        +Transform explosionTransform
+    }
+
+    class Wall {
+        +float duration
+    }
+
+    class SelfCast {
+        +float healAmount
+    }
+
+    SpellForm <|-- Projectile
+    SpellForm <|-- Tornado
+    SpellForm <|-- AreaOfEffect
+    SpellForm <|-- Wall
+    SpellForm <|-- SelfCast
+
+    %% --- SPELL FORM DATA (STATE) ---
+    class SpellFormData {
+        <<Abstract>>
+    }
+    class ProjectileFormData
+    class TornadoFormData
+    class AreaOfEffectFormData
+    class WallFormData
+    class SelfCastFormData
+
+    SpellFormData <|-- ProjectileFormData
+    SpellFormData <|-- TornadoFormData
+    SpellFormData <|-- AreaOfEffectFormData
+    SpellFormData <|-- WallFormData
+    SpellFormData <|-- SelfCastFormData
+
+    %% --- STATUS EFFECTS ---
+    class StatusEffectData {
+        <<ScriptableObject>>
+        +string effectName
+        +float duration
+        +List~EffectBehavior~ behaviors
+    }
+
+    class EffectBehavior {
+        <<Abstract>>
+        +OnApply()*
+        +OnUpdate()*
+        +OnRemove()*
+    }
+
+    class ActiveStatusEffect {
+        +StatusEffectData data
+        +float remainingDuration
+        +int currentStacks
+    }
+
+    class StatusEffectManager {
+        -List~ActiveStatusEffect~ activeEffects
+        +ApplyEffect(StatusEffectData data)
+    }
+
+    class DamageOverTime {
+        +float damageAmount
+        +float tickInterval
+    }
+
+    StatusEffectData --> EffectBehavior
+    EffectBehavior <|-- DamageOverTime
+    StatusEffectManager o-- ActiveStatusEffect
+    ActiveStatusEffect --> StatusEffectData
+    SpellData --> StatusEffectData
+
+    %% --- INTERACTIONS ---
+    class SpellInteractionManager {
+        <<Singleton>>
+        +SpellInteractionMatrix interactionMatrix
+        +HandleInteraction(SpellInstance a, SpellInstance b)
+    }
+    
+    class InteractionRule {
+        <<ScriptableObject>>
+        +SpellData typeA
+        +SpellData typeB
+        +InteractionOutcome outcome
+        +GameObject resultPrefab
+    }
+
+    class SpellInteractionMatrix {
+        <<ScriptableObject>>
+    }
+
+    SpellInteractionManager --> SpellInteractionMatrix
+    SpellInteractionMatrix --> InteractionRule
+    
+    %% --- EXTERNAL LINKS ---
+    class AIDestinationSetter {
+        <<A* Pathfinding>>
+    }
+    class LeanPool {
+        <<Plugin>>
+        +Spawn()
+        +Despawn()
+    }
+    
+    Spell --> LeanPool : Uses
+    AreaOfEffect --> LeanPool : Uses
+    SpellInstance --> LeanPool : Uses
