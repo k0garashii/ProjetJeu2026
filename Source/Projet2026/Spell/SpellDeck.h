@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Spell/SpellData.h"
-#include "Engine/DataAsset.h"
 #include "SpellDeck.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -14,7 +13,7 @@ public:
 	
 	void SetSpellData(USpellData* spellData, int index);
 	void SetActiveSpell(int index);
-	void LaunchSpell(FTransform transform);
+	void LaunchSpell(AActor* actor);
 	
 	UPROPERTY(EditAnywhere, Category = "Spell")
 	TArray<USpellData*> SpellData;

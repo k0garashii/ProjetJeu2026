@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/DataAsset.h"
+#include "Spell/SpellForm/SpellForm.h"
 #include "SpellData.generated.h"
 
 UCLASS(Blueprintable, BlueprintType)
@@ -16,10 +17,10 @@ public:
 	FName SpellName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
 	FString Description;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "SpellInfo")
+	USpellForm* SpellForm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
-	TSubclassOf<AActor> SpellPrefab;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
-	int NumProjectiles;
+	TSubclassOf<ASpellInstance> Prefab;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
 	float ManaCost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")

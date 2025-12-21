@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Spell/SpellForm/SpellForm.h"
 #include "SpellInstance.generated.h"
 
 UCLASS()
@@ -15,8 +14,11 @@ class PROJET2026_API ASpellInstance : public AActor
 public:
 	ASpellInstance();
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Spell")
-	UShapeComponent* Collision;
+	void Initialize(USpellForm* form);
+	void ActivateSpell();	
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	UProjectileMovementComponent* ProjectileMovement;
 
 protected:
 	virtual void BeginPlay() override;
@@ -24,5 +26,7 @@ protected:
 	
 private:
 	bool Collide();
-	void Deactive();
+	void DeactivateSpell();
+	
+	USpellForm* SpellForm;
 };

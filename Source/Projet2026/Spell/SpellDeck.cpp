@@ -20,14 +20,10 @@ void USpellDeck::SetActiveSpell(int index)
 		ActiveSpell = SpellData[index];
 }
 
-void USpellDeck::LaunchSpell(FTransform transform)
+void USpellDeck::LaunchSpell(AActor* actor)
 {
-	if (ActiveSpell && ActiveSpell->SpellPrefab)
+	if (ActiveSpell && ActiveSpell->SpellForm)
 	{
-		UWorld* World = GetWorld();
-		for (int i = 0; i < ActiveSpell->NumProjectiles; ++i)
-		{
-			World->SpawnActor<AActor>(ActiveSpell->SpellPrefab, transform);
-		}
+		ActiveSpell->SpellForm->InitializeSpellForm(actor, ActiveSpell->Prefab);
 	}
 }

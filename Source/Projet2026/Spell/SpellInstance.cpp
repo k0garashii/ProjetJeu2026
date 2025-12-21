@@ -3,6 +3,11 @@
 ASpellInstance::ASpellInstance()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectileMovement->UpdatedComponent = RootComponent;
+	ProjectileMovement->ProjectileGravityScale = 0.f; 
+	ProjectileMovement->bRotationFollowsVelocity = true;
 }
 void ASpellInstance::BeginPlay()
 {
@@ -18,6 +23,18 @@ void ASpellInstance::Tick(float DeltaTime)
 	}
 }
 
+void ASpellInstance::Initialize(USpellForm* form)
+{
+	this->SpellForm = form;
+}
+
+void ASpellInstance::ActivateSpell()
+{
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
+}
+
 bool ASpellInstance::Collide()
 {
 	TArray<AActor*> OverlappingActors;
@@ -29,7 +46,7 @@ bool ASpellInstance::Collide()
 	return false;
 }
 
-void ASpellInstance::Deactive()
+void ASpellInstance::DeactivateSpell()
 {
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);

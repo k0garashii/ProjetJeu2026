@@ -4,7 +4,6 @@
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
@@ -84,7 +83,7 @@ void APlayerCharacter::SelectSpell(const FInputActionValue& Value)
 
 void APlayerCharacter::LaunchCurrentSpell()
 {
-	SpellDeck->LaunchSpell(GetTransform());
+	SpellDeck->LaunchSpell(Cast<AActor>(this));
 }
 
 void APlayerCharacter::DoMove(float Right, float Forward)
