@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Spell/SpellForm/SpellForm.h"
 #include "Projectile.generated.h"
@@ -12,8 +13,7 @@ class PROJET2026_API UProjectile : public USpellForm
 public:
 	virtual void InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell) override;
 	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) override;
-	virtual void HandleCollision() override;
-	
+	virtual void HandleCollision(AActor* Actor, ASpellInstance* instance) override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
 	int NumberOfProjectiles = 8;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
@@ -22,7 +22,7 @@ public:
 	int Damage = 5;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
 	float SpawnOffset = 100;
-
+	
 private:
 	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);
 	FVector SetPosition(int i);

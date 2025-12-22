@@ -1,5 +1,5 @@
 #include "Spell/SpellForm/Projectile.h"
-#include "PlayerCharacter.h"
+#include "Character/Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Spell/SpellInstance.h"
 
@@ -13,9 +13,14 @@ void UProjectile::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
 	
 }
 
-void UProjectile::HandleCollision()
+void UProjectile::HandleCollision(AActor* Actor, ASpellInstance* instance)
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("Projectile hit entity"));
+	if (AEntityCharacter* Entity = Cast<AEntityCharacter>(Actor))
+	{
+		Entity->MyTakeDamage(Damage);
+		instance->DeactivateSpell();
+	}
 }
 
 void UProjectile::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
@@ -31,7 +36,7 @@ void UProjectile::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 		
 		ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(spell, SpawnTransform);
 
-		SpellInstance->Initialize(this);
+		SpellInstance->Initialize(actor, this);
 		SpellInstance->ProjectileMovement->Velocity = SpawnTransform.GetRotation().GetForwardVector() * Speed;
 		SpellInstance->ActivateSpell(); 
 	}

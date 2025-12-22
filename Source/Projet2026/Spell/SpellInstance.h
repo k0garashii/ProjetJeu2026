@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Spell/SpellForm/SpellForm.h"
@@ -14,19 +15,25 @@ class PROJET2026_API ASpellInstance : public AActor
 public:
 	ASpellInstance();
 	
-	void Initialize(USpellForm* form);
+	void Initialize(AActor* launcher, USpellForm* form);
 	void ActivateSpell();	
+	void DeactivateSpell();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	UProjectileMovementComponent* ProjectileMovement;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collision")
+	UBoxComponent* CollisionComponent;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	
 private:
-	bool Collide();
-	void DeactivateSpell();
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
+	UPROPERTY()
 	USpellForm* SpellForm;
+	UPROPERTY()
+	AActor* Launcher;
 };

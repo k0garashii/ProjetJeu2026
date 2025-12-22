@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Character/EntityCharacter.h"
 #include "Logging/LogMacros.h"
 #include "Spell/SpellDeck.h"
 #include "PlayerCharacter.generated.h"
@@ -16,7 +16,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(abstract)
-class APlayerCharacter : public ACharacter
+class APlayerCharacter : public AEntityCharacter
 {
 	GENERATED_BODY()
 	
@@ -31,7 +31,6 @@ public:
 	USpellDeck* SpellDeck;
 	
 protected:
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);

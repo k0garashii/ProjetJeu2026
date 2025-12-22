@@ -13,5 +13,5 @@ class PROJET2026_API USpellForm : public UDataAsset
 public:	
 	virtual void InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell) PURE_VIRTUAL(USpellForm::InitializeSpellForm, );
 	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) PURE_VIRTUAL(USpellForm::HandleTick, );
-	virtual void HandleCollision() PURE_VIRTUAL(USpellForm::HandleCollision, );
+	virtual void HandleCollision(AActor* Actor, ASpellInstance* instance) PURE_VIRTUAL(USpellForm::HandleCollision, );
 };
