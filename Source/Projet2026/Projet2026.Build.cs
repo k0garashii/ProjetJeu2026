@@ -22,7 +22,7 @@ public class Projet2026 : ModuleRules
 			"SlateCore"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { });
+		PrivateDependencyModuleNames.AddRange(new string[] { "NaniteUtilities" });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"Projet2026",

@@ -3,6 +3,12 @@
 #include "Camera/CameraComponent.h"
 #include "Spell/SpellInstance.h"
 
+void UProjectile::SetupInstance(ASpellInstance* Instance)
+{
+	CreateBoxCollisionOverlapp(Instance);
+	CreateMovementComp(Instance, Speed);
+}
+
 void UProjectile::InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell)
 {
 	SpawnSpell(actor, spell);
@@ -37,7 +43,7 @@ void UProjectile::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 		ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(spell, SpawnTransform);
 
 		SpellInstance->Initialize(actor, this);
-		SpellInstance->ProjectileMovement->Velocity = SpawnTransform.GetRotation().GetForwardVector() * Speed;
+		SpellInstance->ProjectileMovement->Velocity = Rotation.GetForwardVector() * Speed;
 		SpellInstance->ActivateSpell(); 
 	}
 }

@@ -17,7 +17,9 @@ public:
 	virtual void Deactivate();
 	
 	int GetHealth() const { return Health; }
+	void SetHealth(int NewHealth) { Health = FMath::Clamp(NewHealth, 0, MaxHealth); }
 	int GetMaxHealth() const { return MaxHealth; }
+	void SetMaxHealth(int NewMaxHealth) { MaxHealth = NewMaxHealth; }
 	int GetPhysicalDamage() const { return PhysicalDamage; }
 	int GetMagicalDamage() const { return MagicalDamage; }
 	int GetPhysicalDefense() const { return PhysicalDefense; }

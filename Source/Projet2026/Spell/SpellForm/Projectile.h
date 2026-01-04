@@ -11,6 +11,7 @@ class PROJET2026_API UProjectile : public USpellForm
 {
 	GENERATED_BODY()
 public:
+	virtual void SetupInstance(ASpellInstance* Instance) override;
 	virtual void InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell) override;
 	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) override;
 	virtual void HandleCollision(AActor* Actor, ASpellInstance* instance) override;

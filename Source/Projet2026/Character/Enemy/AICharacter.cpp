@@ -7,6 +7,9 @@ AAICharacter::AAICharacter()
 	HealthBar->SetupAttachment(RootComponent);
 	HealthBar->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f)); 
 	HealthBar->SetWidgetSpace(EWidgetSpace::Screen);
+	
+	SetMaxHealth(100.0f);
+	SetHealth(100.0f);
 }
 
 void AAICharacter::BeginPlay()

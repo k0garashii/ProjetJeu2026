@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Spell/SpellForm/SpellForm.h"
@@ -18,22 +17,23 @@ public:
 	void Initialize(AActor* launcher, USpellForm* form);
 	void ActivateSpell();	
 	void DeactivateSpell();
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	UProjectileMovementComponent* ProjectileMovement;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collision")
-	UBoxComponent* CollisionComponent;
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-	
-private:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	UPROPERTY()
-	USpellForm* SpellForm;
+	USceneComponent* DefaultRoot;
+	UPROPERTY(BlueprintReadOnly)
+	UProjectileMovementComponent* ProjectileMovement;
+	UPROPERTY()
+	UShapeComponent* DetectionComponent;
 	UPROPERTY()
 	AActor* Launcher;
+
+protected:
+	virtual void Tick(float DeltaTime) override;
+	
+private:
+	
+	UPROPERTY()
+	USpellForm* SpellForm;
 };
