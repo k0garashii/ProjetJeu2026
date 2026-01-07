@@ -16,6 +16,6 @@ public:
 	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) PURE_VIRTUAL(USpellForm::HandleTick, UE_LOG(LogTemp, Fatal, TEXT("HandleTick non implemente dans %s"), *GetName()); );
 	virtual void HandleCollision(AActor* Actor, ASpellInstance* instance) PURE_VIRTUAL(USpellForm::HandleCollision, UE_LOG(LogTemp, Fatal, TEXT("HandleCollision non implemente dans %s"), *GetName()); );
 	
-	void CreateBoxCollisionOverlapp(ASpellInstance* Instance);
+	void CreateBoxCollisionOverlapp(ASpellInstance* Instance, FVector BoxExtent);
 	void CreateMovementComp(ASpellInstance* Instance, float Speed);
 };

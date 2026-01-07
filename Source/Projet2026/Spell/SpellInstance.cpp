@@ -41,7 +41,8 @@ void ASpellInstance::DeactivateSpell()
 
 void ASpellInstance::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OverlapBegin"));
 	if (SpellForm && OtherActor != Launcher)
+	{
 		SpellForm->HandleCollision(OtherActor, this);
+	}
 }

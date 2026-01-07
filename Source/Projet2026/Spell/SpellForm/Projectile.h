@@ -23,6 +23,8 @@ public:
 	int Damage = 5;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
 	float SpawnOffset = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	FVector BoxExtent = FVector(10.f, 10.f, 10.f);
 	
 private:
 	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);

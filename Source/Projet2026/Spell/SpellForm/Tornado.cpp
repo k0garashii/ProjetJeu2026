@@ -4,23 +4,8 @@
 
 void UTornado::SetupInstance(ASpellInstance* Instance)
 {
-	UBoxComponent* NewBox = NewObject<UBoxComponent>(Instance);
-	NewBox->RegisterComponent();
-	NewBox->AttachToComponent(Instance->DefaultRoot, FAttachmentTransformRules::KeepRelativeTransform);
-	NewBox->SetBoxExtent(FVector(500, 500, 1000)); // Taille de ta tornade
-	NewBox->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	Instance->DetectionComponent = NewBox;
-	
-	UProjectileMovementComponent* Movement = NewObject<UProjectileMovementComponent>(Instance);
-	Movement->UpdatedComponent = Instance->DefaultRoot;
-	Movement->InitialSpeed = Speed;
-	Movement->MaxSpeed = Speed;
-	Movement->ProjectileGravityScale = 0.f;
-	Movement->bRotationFollowsVelocity = true;
-	Movement->bShouldBounce = false;
-	Movement->RegisterComponent();
-
-	Instance->ProjectileMovement = Movement;
+	CreateBoxCollisionOverlapp(Instance, BoxExtent);
+	CreateMovementComp(Instance, Speed);
 }
 
 void UTornado::InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell)

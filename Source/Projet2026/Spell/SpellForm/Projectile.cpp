@@ -5,7 +5,7 @@
 
 void UProjectile::SetupInstance(ASpellInstance* Instance)
 {
-	CreateBoxCollisionOverlapp(Instance);
+	CreateBoxCollisionOverlapp(Instance, BoxExtent);
 	CreateMovementComp(Instance, Speed);
 }
 
@@ -21,7 +21,6 @@ void UProjectile::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
 
 void UProjectile::HandleCollision(AActor* Actor, ASpellInstance* instance)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Projectile hit entity"));
 	if (AEntityCharacter* Entity = Cast<AEntityCharacter>(Actor))
 	{
 		Entity->MyTakeDamage(Damage);
@@ -32,10 +31,17 @@ void UProjectile::HandleCollision(AActor* Actor, ASpellInstance* instance)
 void UProjectile::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 {
 	UWorld* world = actor->GetWorld();
+	FTransform ActorTransform = actor->GetActorTransform();
+	if (APlayerCharacter* player = Cast<APlayerCharacter>(actor))
+	{
+		ActorTransform.SetLocation(player->GetActorLocation());
+		ActorTransform.SetRotation(player->FollowCamera->GetComponentTransform().GetRotation());
+	}
 	
 	for (int i = 0; i < NumberOfProjectiles; i++)
 	{
-		FVector FinalLocation = actor->GetActorLocation() + SetPosition(i);
+		FVector LocalOffset = SetPosition(i);
+		FVector FinalLocation = ActorTransform.TransformPosition(LocalOffset);
 		FQuat Rotation = SetRotation(world, actor, FinalLocation);
 		
 		FTransform SpawnTransform(Rotation, FinalLocation);

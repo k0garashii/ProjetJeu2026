@@ -38,6 +38,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
 	float tornadoHeight = 30.f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	FVector BoxExtent = FVector(10.f, 10.f, 10.f);
+	
 private:
 	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);
 	FVector ApplyTornado(FVector spellPos, FVector elementPos, float DeltaTime);
