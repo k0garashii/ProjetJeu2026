@@ -11,7 +11,7 @@ void USpellForm::CreateBoxCollisionOverlapp(ASpellInstance* Instance, FVector Bo
 	NewBox->RegisterComponent();
 	NewBox->AttachToComponent(Instance->DefaultRoot, FAttachmentTransformRules::KeepRelativeTransform);
 	NewBox->OnComponentBeginOverlap.AddDynamic(Instance, &ASpellInstance::OnOverlapBegin);
-	NewBox->SetHiddenInGame(false);
+	NewBox->SetHiddenInGame(!ShowCollision);
 	NewBox->SetBoxExtent(BoxExtent);
 	Instance->DetectionComponent = NewBox;
 }
@@ -27,4 +27,17 @@ void USpellForm::CreateMovementComp(ASpellInstance* Instance, float Speed)
 	Movement->bShouldBounce = false;
 	Movement->RegisterComponent();
 	Instance->ProjectileMovement = Movement;
+}
+
+void USpellForm::CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* NiagaraSystem)
+{
+	Instance->NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			NiagaraSystem, 
+			Instance->DefaultRoot, 
+			NAME_None, 
+			FVector::ZeroVector, 
+			FRotator::ZeroRotator, 
+			EAttachLocation::KeepRelativeOffset, 
+			true
+		);
 }

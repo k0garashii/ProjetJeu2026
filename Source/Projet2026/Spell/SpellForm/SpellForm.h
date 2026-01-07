@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "NiagaraFunctionLibrary.h"
 #include "SpellForm.generated.h"
 
 class ASpellInstance;
@@ -18,4 +19,8 @@ public:
 	
 	void CreateBoxCollisionOverlapp(ASpellInstance* Instance, FVector BoxExtent);
 	void CreateMovementComp(ASpellInstance* Instance, float Speed);
+	void CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* ParticleSystem);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision")
+	bool ShowCollision = false;
 };

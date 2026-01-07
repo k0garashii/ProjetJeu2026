@@ -1,11 +1,13 @@
 #include "Spell/SpellForm/Tornado.h"
-
+#include "NiagaraComponent.h"
 #include "Spell/SpellInstance.h"
 
 void UTornado::SetupInstance(ASpellInstance* Instance)
 {
 	CreateBoxCollisionOverlapp(Instance, BoxExtent);
 	CreateMovementComp(Instance, Speed);
+	CreateParticlesComp(Instance, TornadoNiagara);
+	UpdateNiagara(Instance);
 }
 
 void UTornado::InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell)
@@ -30,7 +32,7 @@ void UTornado::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
 			FVector FluidVelocity = ApplyTornado(SpellInstance->GetActorLocation(), Element->GetActorLocation(), DeltaTime);
 			FVector CurrentVelocity = PhysComponent->GetPhysicsLinearVelocity();
 			FVector RelativeVelocity = FluidVelocity - CurrentVelocity;
-			PhysComponent->AddForce(RelativeVelocity * tornadoStrength);
+			PhysComponent->AddForce(RelativeVelocity * TornadoStrength);
 		}
 	}
 }
@@ -44,7 +46,7 @@ void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 {
 	UWorld* world = actor->GetWorld();
 	
-	FVector FinalLocation = actor->GetActorLocation() + actor->GetActorRotation().RotateVector(actor->GetActorForwardVector()) * Offset;
+	FVector FinalLocation = actor->GetActorLocation() + actor->GetActorForwardVector() * Offset;
 	FRotator Rotation = actor->GetActorRotation();
 	
 	FTransform SpawnTransform(Rotation, FinalLocation);
@@ -64,7 +66,7 @@ FVector UTornado::ApplyTornado(FVector spellPos, FVector elementPos, float Delta
 		0.0f,
 		FMath::PerlinNoise2D(FVector2D(elementPos.Z, elementPos.Y + t)) * 0.5f
 	);
-	Noise *= turbulenceStrength;
+	Noise *= TurbulenceStrength;
 	
     FVector transformPos = spellPos;
     float z = elementPos.Z - transformPos.Z;
@@ -79,19 +81,33 @@ FVector UTornado::ApplyTornado(FVector spellPos, FVector elementPos, float Delta
     FVector tangential = FVector::UpVector.Cross(radial);
     
 	float height = FMath::Max(0.f, z);
-	float height01 = FMath::Clamp(height / tornadoHeight, 0.f, 1.f);
+	float height01 = FMath::Clamp(height / TornadoHeight, 0.f, 1.f);
     
     float gammaAtHeight = FMath::Lerp(
-    gammaBase, 
-    gammaTop, 
-    FMath::Pow(height01, gammaExponent)
+    GammaBase, 
+    GammaTop, 
+    FMath::Pow(height01, GammaExponent)
     );
     
-    float Vr = -a * dist;
-    float Vtheta = gammaAtHeight / (2 * PI * dist) * (1 - FMath::Exp(- (a * dist * dist) / (2 * nu)));
-    float Vz = 2 * a * z;
+    float Vr = -A * dist;
+    float Vtheta = gammaAtHeight / (2 * PI * dist) * (1 - FMath::Exp(A * dist * dist / (2 * Nu)));
+    float Vz = 2 * A * z;
     
     FVector BaseVelocity = Vr * radial + Vtheta * tangential + Vz * FVector::UpVector;
     
     return BaseVelocity + Noise;
+}
+
+void UTornado::UpdateNiagara(ASpellInstance* Instance)
+{
+	if (UNiagaraComponent* NiagaraComp = Instance->NiagaraComponent)
+	{
+		NiagaraComp->SetVariableFloat(FName("User.TornadoHeight"), TornadoHeight);
+		NiagaraComp->SetVariableFloat(FName("User.GammaBase"), GammaBase);
+		NiagaraComp->SetVariableFloat(FName("User.GammaTop"), GammaTop);
+		NiagaraComp->SetVariableFloat(FName("User.GammaExponent"), GammaExponent);
+		NiagaraComp->SetVariableFloat(FName("User.A"), A);
+		NiagaraComp->SetVariableFloat(FName("User.Nu"), Nu);
+		NiagaraComp->SetVariableFloat(FName("User.Turbulence"), TurbulenceStrength);
+	}
 }

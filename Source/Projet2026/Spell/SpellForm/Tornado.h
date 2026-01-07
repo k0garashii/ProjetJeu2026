@@ -21,27 +21,31 @@ public:
 	float Speed = 600.f;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Parameters")
-	float tornadoStrength = 20.f;
+	float TornadoStrength = 20.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Parameters")
-	float turbulenceStrength = 2.f; // Intensité de la turbulence
+	float TurbulenceStrength = 2.f; // Intensité de la turbulence
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Parameters")
-	float a = 0.5f; // Aspiration
+	float A = 0.5f; // Aspiration
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Parameters")
-	float nu = 0.1f; // Viscosité cinématique
+	float Nu = 0.1f; // Viscosité cinématique
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
-	float gammaBase = 10.f;   // près du sol
+	float GammaBase = 10.f;   // près du sol
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
-	float gammaTop = 40.f;    // en haut
+	float GammaTop = 40.f;    // en haut
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
-	float gammaExponent = 1.5f; // forme du cône
+	float GammaExponent = 1.5f; // forme du cône
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
-	float tornadoHeight = 30.f;
+	float TornadoHeight = 30.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	FVector BoxExtent = FVector(10.f, 10.f, 10.f);
 	
+	UPROPERTY(EditAnywhere, Category = "Visuals")
+	class UNiagaraSystem* TornadoNiagara;
+	
 private:
 	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);
 	FVector ApplyTornado(FVector spellPos, FVector elementPos, float DeltaTime);
+	void UpdateNiagara(ASpellInstance* Instance);
 };

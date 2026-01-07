@@ -22,10 +22,14 @@ public:
 	
 	UPROPERTY()
 	USceneComponent* DefaultRoot;
+	
 	UPROPERTY(BlueprintReadOnly)
 	UProjectileMovementComponent* ProjectileMovement;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UShapeComponent* DetectionComponent;
+	UPROPERTY(BlueprintReadOnly)
+	UNiagaraComponent* NiagaraComponent;
+	
 	UPROPERTY()
 	AActor* Launcher;
 
