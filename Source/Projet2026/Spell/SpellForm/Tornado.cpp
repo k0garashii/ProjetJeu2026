@@ -16,9 +16,7 @@ void UTornado::InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> sp
 }
 
 void UTornado::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
-{
-	if (!SpellInstance->DetectionComponent) return;
-	
+{	
 	TArray<AActor*> OverlappingActors;
 	SpellInstance->DetectionComponent->GetOverlappingActors(OverlappingActors);
 	
@@ -37,9 +35,17 @@ void UTornado::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
 	}
 }
 
-void UTornado::HandleCollision(AActor* Actor, ASpellInstance* instance)
+void UTornado::HandleCollision(AActor* Actor, ASpellInstance* Instance)
 {
-	// Implementation for handling collisions for the tornado spell form
+	UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
+	if (PhysComponent && PhysComponent->IsSimulatingPhysics())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Tornado applied force to %s"), *Actor->GetName());
+		FVector FluidVelocity = ApplyTornado(Instance->GetActorLocation(), Actor->GetActorLocation(), GetWorld()->GetDeltaSeconds());
+		FVector CurrentVelocity = PhysComponent->GetPhysicsLinearVelocity();
+		FVector RelativeVelocity = FluidVelocity - CurrentVelocity;
+		PhysComponent->AddForce(RelativeVelocity * TornadoStrength);
+	}
 }
 
 void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
