@@ -17,10 +17,7 @@ void UTornado::InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Sp
 
 void UTornado::HandleTick(ASpellInstance* Instance, float DeltaTime)
 {
-	for (AActor* Element : Instance->OverlappingActors)
-	{
-		HandleTickCollision(Element, Instance, DeltaTime);
-	}
+	SnapTornadoToGround(Instance, DeltaTime);
 }
 
 void UTornado::HandleFirstCollision(AActor* Actor, ASpellInstance* instance)
@@ -28,6 +25,7 @@ void UTornado::HandleFirstCollision(AActor* Actor, ASpellInstance* instance)
 	UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
 	if (PhysComponent && PhysComponent->IsSimulatingPhysics())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Tornado collided with %s"), *Actor->GetName());
 		instance->OverlappingActors.Add(Actor);
 	}
 }
@@ -36,12 +34,10 @@ void UTornado::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, floa
 {
 	if (UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Tornado applied force to %s"), *Actor->GetName());
 		FVector FluidVelocity = ApplyTornado(Instance->GetActorLocation(), Actor->GetActorLocation(), DeltaTime);
 		FVector CurrentVelocity = PhysComponent->GetPhysicsLinearVelocity();
 		FVector RelativeVelocity = FluidVelocity - CurrentVelocity;
 		
-		UE_LOG(LogTemp, Warning, TEXT("Fluid Velocity: %s, Current Velocity: %s, Relative Velocity: %s"), *FluidVelocity.ToString(), *CurrentVelocity.ToString(), *RelativeVelocity.ToString());
 		PhysComponent->AddForce(RelativeVelocity * TornadoStrength);
 	}
 }
@@ -49,6 +45,7 @@ void UTornado::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, floa
 void UTornado::HandleEndCollision(AActor* Actor, ASpellInstance* Instance)
 {
 	Instance->OverlappingActors.Remove(Actor);
+	UE_LOG(LogTemp, Warning, TEXT("Tornado ended collide with %s"), *Actor->GetName());
 }
 
 void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
@@ -63,6 +60,7 @@ void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 	ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(spell, SpawnTransform);
 
 	SpellInstance->Initialize(actor, this);
+	SpellInstance->ProjectileMovement->Velocity = actor->GetActorForwardVector() * Speed;
 	SpellInstance->ActivateSpell();
 }
 
@@ -131,5 +129,25 @@ void UTornado::UpdateNiagara(ASpellInstance* Instance)
 		NiagaraComp->SetVariableFloat(FName("User.Turbulence"), TurbulenceStrength);
 		NiagaraComp->SetVariableFloat(FName("User.OutflowHeightStart"), OutflowHeightStart);
 		NiagaraComp->SetVariableFloat(FName("User.FlareStrength"), FlareStrength);
+	}
+}
+
+void UTornado::SnapTornadoToGround(ASpellInstance* Instance, float DeltaTime)
+{
+	FHitResult HitResult;
+	FVector Start = Instance->GetActorLocation() + FVector(0.f, 0.f, 1000.f);
+	FVector End = Instance->GetActorLocation() - FVector(0.f, 0.f, 10000.f);
+	DrawDebugLine(Instance->GetWorld(), Start, End, FColor::Red, false, 0.1);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Pos Start : %s, Pos End : %s"), *Start.ToString(), *End.ToString());
+	
+	FCollisionQueryParams CollisionParams;
+	
+	if (Instance->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams))
+	{
+		FVector TargetLoc = Instance->GetActorLocation();
+		TargetLoc.Z = HitResult.Location.Z; 
+		// Utiliser VInterpTo pour un mouvement fluide au-dessus des bosses
+		Instance->SetActorLocation(FMath::VInterpTo(Instance->GetActorLocation(), TargetLoc, DeltaTime, 5.0f));
 	}
 }

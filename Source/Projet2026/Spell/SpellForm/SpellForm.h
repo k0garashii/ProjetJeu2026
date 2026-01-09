@@ -23,8 +23,9 @@ public:
 	void CreateBoxCollisionOverlap(ASpellInstance* Instance, FVector BoxExtent);
 	void CreateMovementComp(ASpellInstance* Instance, float Speed);
 	void CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* ParticleSystem);
+	void CreatePhysicsComp(ASpellInstance* Instance);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision")
 	bool ShowCollision = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Physics")
 	bool SimulatePhysics = false;

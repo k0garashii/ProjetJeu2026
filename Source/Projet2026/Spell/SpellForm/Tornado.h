@@ -55,4 +55,6 @@ private:
 	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);
 	FVector ApplyTornado(FVector spellPos, FVector elementPos, float DeltaTime);
 	void UpdateNiagara(ASpellInstance* Instance);
+	UFUNCTION()
+	void SnapTornadoToGround(ASpellInstance* Instance, float DeltaTime);
 };

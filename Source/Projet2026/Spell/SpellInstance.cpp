@@ -5,14 +5,12 @@
 ASpellInstance::ASpellInstance()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
-	DefaultRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultRoot"));
-	RootComponent = DefaultRoot;
 }
 
 void ASpellInstance::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	SpellForm->HandleTick(this, DeltaTime);
 	for (AActor* actor : OverlappingActors)
 	{
 		SpellForm->HandleTickCollision(actor, this, DeltaTime);
@@ -47,7 +45,7 @@ void ASpellInstance::DeactivateSpell()
 
 void ASpellInstance::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (SpellForm && OtherActor != Launcher)
+	if (SpellForm && OtherActor != Launcher && OtherActor != this)
 	{
 		SpellForm->HandleFirstCollision(OtherActor, this);
 	}

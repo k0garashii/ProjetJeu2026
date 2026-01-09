@@ -22,9 +22,6 @@ public:
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	UPROPERTY()
-	USceneComponent* DefaultRoot;
-	
 	UPROPERTY(BlueprintReadOnly)
 	UProjectileMovementComponent* ProjectileMovement;
 	UPROPERTY(BlueprintReadOnly)
