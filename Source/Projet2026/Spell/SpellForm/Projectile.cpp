@@ -5,13 +5,13 @@
 
 void UProjectile::SetupInstance(ASpellInstance* Instance)
 {
-	CreateBoxCollisionOverlapp(Instance, BoxExtent);
+	CreateBoxCollisionOverlap(Instance, BoxExtent);
 	CreateMovementComp(Instance, Speed);
 }
 
-void UProjectile::InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell)
+void UProjectile::InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
 {
-	SpawnSpell(actor, spell);
+	SpawnSpell(Actor, Spell);
 }
 
 void UProjectile::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
@@ -19,20 +19,24 @@ void UProjectile::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
 	
 }
 
-void UProjectile::HandleCollision(AActor* Actor, ASpellInstance* instance)
+void UProjectile::HandleFirstCollision(AActor* Actor, ASpellInstance* Instance)
 {
 	if (AEntityCharacter* Entity = Cast<AEntityCharacter>(Actor))
 	{
 		Entity->MyTakeDamage(Damage);
-		instance->DeactivateSpell();
+		Instance->DeactivateSpell();
 	}
 }
 
-void UProjectile::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
+void UProjectile::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime){ }
+
+void UProjectile::HandleEndCollision(AActor* Actor, ASpellInstance* Instance) { }
+
+void UProjectile::SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
 {
-	UWorld* world = actor->GetWorld();
-	FTransform ActorTransform = actor->GetActorTransform();
-	if (APlayerCharacter* player = Cast<APlayerCharacter>(actor))
+	UWorld* world = Actor->GetWorld();
+	FTransform ActorTransform = Actor->GetActorTransform();
+	if (APlayerCharacter* player = Cast<APlayerCharacter>(Actor))
 	{
 		ActorTransform.SetLocation(player->GetActorLocation());
 		ActorTransform.SetRotation(player->FollowCamera->GetComponentTransform().GetRotation());
@@ -42,13 +46,13 @@ void UProjectile::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 	{
 		FVector LocalOffset = SetPosition(i);
 		FVector FinalLocation = ActorTransform.TransformPosition(LocalOffset);
-		FQuat Rotation = SetRotation(world, actor, FinalLocation);
+		FQuat Rotation = SetRotation(world, Actor, FinalLocation);
 		
 		FTransform SpawnTransform(Rotation, FinalLocation);
 		
-		ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(spell, SpawnTransform);
+		ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(Spell, SpawnTransform);
 
-		SpellInstance->Initialize(actor, this);
+		SpellInstance->Initialize(Actor, this);
 		SpellInstance->ProjectileMovement->Velocity = Rotation.GetForwardVector() * Speed;
 		SpellInstance->ActivateSpell(); 
 	}

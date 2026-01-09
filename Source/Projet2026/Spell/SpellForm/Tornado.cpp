@@ -4,48 +4,51 @@
 
 void UTornado::SetupInstance(ASpellInstance* Instance)
 {
-	CreateBoxCollisionOverlapp(Instance, BoxExtent);
+	CreateBoxCollisionOverlap(Instance, BoxExtent);
 	CreateMovementComp(Instance, Speed);
 	CreateParticlesComp(Instance, TornadoNiagara);
 	UpdateNiagara(Instance);
 }
 
-void UTornado::InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell)
+void UTornado::InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
 {
-	SpawnSpell(actor, spell);
+	SpawnSpell(Actor, Spell);
 }
 
-void UTornado::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
-{	
-	TArray<AActor*> OverlappingActors;
-	SpellInstance->DetectionComponent->GetOverlappingActors(OverlappingActors);
-	
-	for (AActor* Element : OverlappingActors)
+void UTornado::HandleTick(ASpellInstance* Instance, float DeltaTime)
+{
+	for (AActor* Element : Instance->OverlappingActors)
 	{
-		if (!Element || Element == SpellInstance->Launcher) continue;
-
-		UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Element->GetRootComponent());
-		if (PhysComponent && PhysComponent->IsSimulatingPhysics())
-		{
-			FVector FluidVelocity = ApplyTornado(SpellInstance->GetActorLocation(), Element->GetActorLocation(), DeltaTime);
-			FVector CurrentVelocity = PhysComponent->GetPhysicsLinearVelocity();
-			FVector RelativeVelocity = FluidVelocity - CurrentVelocity;
-			PhysComponent->AddForce(RelativeVelocity * TornadoStrength);
-		}
+		HandleTickCollision(Element, Instance, DeltaTime);
 	}
 }
 
-void UTornado::HandleCollision(AActor* Actor, ASpellInstance* Instance)
+void UTornado::HandleFirstCollision(AActor* Actor, ASpellInstance* instance)
 {
 	UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
 	if (PhysComponent && PhysComponent->IsSimulatingPhysics())
 	{
+		instance->OverlappingActors.Add(Actor);
+	}
+}
+
+void UTornado::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime)
+{
+	if (UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Tornado applied force to %s"), *Actor->GetName());
-		FVector FluidVelocity = ApplyTornado(Instance->GetActorLocation(), Actor->GetActorLocation(), GetWorld()->GetDeltaSeconds());
+		FVector FluidVelocity = ApplyTornado(Instance->GetActorLocation(), Actor->GetActorLocation(), DeltaTime);
 		FVector CurrentVelocity = PhysComponent->GetPhysicsLinearVelocity();
 		FVector RelativeVelocity = FluidVelocity - CurrentVelocity;
+		
+		UE_LOG(LogTemp, Warning, TEXT("Fluid Velocity: %s, Current Velocity: %s, Relative Velocity: %s"), *FluidVelocity.ToString(), *CurrentVelocity.ToString(), *RelativeVelocity.ToString());
 		PhysComponent->AddForce(RelativeVelocity * TornadoStrength);
 	}
+}
+
+void UTornado::HandleEndCollision(AActor* Actor, ASpellInstance* Instance)
+{
+	Instance->OverlappingActors.Remove(Actor);
 }
 
 void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
@@ -65,12 +68,11 @@ void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 
 FVector UTornado::ApplyTornado(FVector spellPos, FVector elementPos, float DeltaTime)
 {
-	//Calculate noise of the tornado using Perlin noise
-	float t = DeltaTime * 0.5f;
+	float time = DeltaTime * 0.5f;
 	FVector Noise = FVector(
-		FMath::PerlinNoise2D(FVector2D(elementPos.X + t, elementPos.Y)) * 0.5f,
+		FMath::PerlinNoise2D(FVector2D(elementPos.X + time, elementPos.Y)) * 0.5f,
 		0.0f,
-		FMath::PerlinNoise2D(FVector2D(elementPos.Z, elementPos.Y + t)) * 0.5f
+		FMath::PerlinNoise2D(FVector2D(elementPos.Z, elementPos.Y + time)) * 0.5f
 	);
 	Noise *= TurbulenceStrength;
 	
@@ -94,12 +96,24 @@ FVector UTornado::ApplyTornado(FVector spellPos, FVector elementPos, float Delta
     GammaTop, 
     FMath::Pow(height01, GammaExponent)
     );
-    
-    float Vr = -A * dist;
+	
+	// Calcul du facteur d'évasement (0 en bas, 1 tout en haut avec une transition douce)
+	 float t = FMath::Clamp((height01 - OutflowHeightStart) / (1.0 - OutflowHeightStart), 0.0, 1.0);
+	 //Formule du smoothStep
+	 float FlareFactor = t * t * (3.0 - 2.0 * t);
+	
+	 //On passe de l'aspiration (-Vr) à l'expulsion (+Vr)
+	 float Suction = -A * dist;
+	 float PushOut = A * dist * FlareStrength;
+     
     float Vtheta = gammaAtHeight / (2 * PI * dist) * (1 - FMath::Exp(A * dist * dist / (2 * Nu)));
     float Vz = 2 * A * z;
+	
+	float FinalVr = FMath::Lerp(Suction, PushOut, FlareFactor);
+	float FinalVtheta = Vtheta * (1.0 - (FlareFactor * 0.5));
+	float FinalVz = Vz * (1.0 - FlareFactor);
     
-    FVector BaseVelocity = Vr * radial + Vtheta * tangential + Vz * FVector::UpVector;
+    FVector BaseVelocity = FinalVr * radial + FinalVtheta * tangential + FinalVz * FVector::UpVector;
     
     return BaseVelocity + Noise;
 }
@@ -115,5 +129,7 @@ void UTornado::UpdateNiagara(ASpellInstance* Instance)
 		NiagaraComp->SetVariableFloat(FName("User.A"), A);
 		NiagaraComp->SetVariableFloat(FName("User.Nu"), Nu);
 		NiagaraComp->SetVariableFloat(FName("User.Turbulence"), TurbulenceStrength);
+		NiagaraComp->SetVariableFloat(FName("User.OutflowHeightStart"), OutflowHeightStart);
+		NiagaraComp->SetVariableFloat(FName("User.FlareStrength"), FlareStrength);
 	}
 }

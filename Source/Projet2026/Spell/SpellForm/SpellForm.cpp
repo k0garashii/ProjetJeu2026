@@ -3,16 +3,24 @@
 #include "Components/BoxComponent.h"
 #include "Spell/SpellInstance.h"
 
-void USpellForm::CreateBoxCollisionOverlapp(ASpellInstance* Instance, FVector BoxExtent)
+void USpellForm::CreateBoxCollisionOverlap(ASpellInstance* Instance, FVector BoxExtent)
 {
 	UBoxComponent* NewBox = NewObject<UBoxComponent>(Instance);
 	NewBox->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	NewBox->SetSimulatePhysics(false);
 	NewBox->RegisterComponent();
 	NewBox->AttachToComponent(Instance->DefaultRoot, FAttachmentTransformRules::KeepRelativeTransform);
 	NewBox->OnComponentBeginOverlap.AddDynamic(Instance, &ASpellInstance::OnOverlapBegin);
 	NewBox->SetHiddenInGame(!ShowCollision);
 	NewBox->SetBoxExtent(BoxExtent);
+	if (!SimulatePhysics)
+		NewBox->SetSimulatePhysics(false);
+	else
+	{
+		NewBox->SetSimulatePhysics(true);
+		NewBox->SetEnableGravity(true);
+		NewBox->SetMassOverrideInKg(NAME_None, MassKg);
+		Instance->SetRootComponent(NewBox);
+	}
 	Instance->DetectionComponent = NewBox;
 }
 

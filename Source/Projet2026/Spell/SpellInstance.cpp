@@ -1,5 +1,7 @@
 #include "Spell/SpellInstance.h"
 
+#include "InterchangeTranslatorBase.h"
+
 ASpellInstance::ASpellInstance()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -11,6 +13,10 @@ ASpellInstance::ASpellInstance()
 void ASpellInstance::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	for (AActor* actor : OverlappingActors)
+	{
+		SpellForm->HandleTickCollision(actor, this, DeltaTime);
+	}
 }
 
 void ASpellInstance::Initialize(AActor* launcher, USpellForm* form)
@@ -43,6 +49,14 @@ void ASpellInstance::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 {
 	if (SpellForm && OtherActor != Launcher)
 	{
-		SpellForm->HandleCollision(OtherActor, this);
+		SpellForm->HandleFirstCollision(OtherActor, this);
+	}
+}
+
+void ASpellInstance::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (SpellForm && OtherActor != Launcher)
+	{
+		SpellForm->HandleEndCollision(OtherActor, this);
 	}
 }

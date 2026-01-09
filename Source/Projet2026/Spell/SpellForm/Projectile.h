@@ -12,9 +12,12 @@ class PROJET2026_API UProjectile : public USpellForm
 	GENERATED_BODY()
 public:
 	virtual void SetupInstance(ASpellInstance* Instance) override;
-	virtual void InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell) override;
+	virtual void InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell) override;
 	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) override;
-	virtual void HandleCollision(AActor* Actor, ASpellInstance* instance) override;
+	
+	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) override;
+	virtual void HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime) override;
+	virtual void HandleEndCollision(AActor* Actor, ASpellInstance* Instance) override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
 	int NumberOfProjectiles = 8;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
@@ -27,7 +30,7 @@ public:
 	FVector BoxExtent = FVector(10.f, 10.f, 10.f);
 	
 private:
-	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);
+	void SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell);
 	FVector SetPosition(int i);
-	FQuat SetRotation(UWorld* world, AActor* actor, FVector SpellPosition);
+	FQuat SetRotation(UWorld* World, AActor* Actor, FVector SpellPosition);
 };

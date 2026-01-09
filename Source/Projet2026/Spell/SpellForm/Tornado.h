@@ -11,9 +11,12 @@ class PROJET2026_API UTornado : public USpellForm
 	GENERATED_BODY()
 public:
 	virtual void SetupInstance(ASpellInstance* Instance) override;
-	virtual void InitializeSpellForm(AActor* actor, TSubclassOf<ASpellInstance> spell) override;
-	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) override;
-	virtual void HandleCollision(AActor* Actor, ASpellInstance* instance) override;
+	virtual void InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell) override;
+	virtual void HandleTick(ASpellInstance* Instance, float DeltaTime) override;
+	
+	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) override;
+	virtual void HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime) override;
+	virtual void HandleEndCollision(AActor* Actor, ASpellInstance* Instance) override;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Spawn Parameters")
 	float Offset = 100.f;
@@ -36,7 +39,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
 	float GammaExponent = 1.5f; // forme du cône
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
-	float TornadoHeight = 30.f;
+	float TornadoHeight = 30.f;	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
+	float OutflowHeightStart = 0.05f;	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tornado Shape Parameters")
+	float FlareStrength = 0.5f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	FVector BoxExtent = FVector(10.f, 10.f, 10.f);
