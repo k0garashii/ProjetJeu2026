@@ -40,15 +40,3 @@ void USpellForm::CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* N
 			true
 		);
 }
-
-void USpellForm::CreatePhysicsComp(ASpellInstance* Instance)
-{
-	UBoxComponent* Box = NewObject<UBoxComponent>(Instance);
-	Box->SetBoxExtent(FVector(0.1, 0.1, 0.1));
-	Box->SetCollisionProfileName(TEXT("PhysicsActor"));
-	Box->SetSimulatePhysics(true);
-	Box->SetHiddenInGame(!ShowCollision);
-	
-	Instance->SetRootComponent(Box);
-	Box->RegisterComponent();
-}
