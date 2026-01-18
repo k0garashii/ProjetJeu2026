@@ -6,6 +6,7 @@
 void UProjectile::SetupInstance(ASpellInstance* Instance)
 {
 	CreateBoxCollisionOverlap(Instance, BoxExtent);
+	CreateSpellInteractionBox(Instance, BoxExtent);
 	CreateMovementComp(Instance, Speed);
 }
 
@@ -31,6 +32,11 @@ void UProjectile::HandleFirstCollision(AActor* Actor, ASpellInstance* Instance)
 void UProjectile::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime){ }
 
 void UProjectile::HandleEndCollision(AActor* Actor, ASpellInstance* Instance) { }
+
+void UProjectile::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance)
+{
+	UE_LOG(LogTemp, Log, TEXT("Spell %s"), *Spell->GetName());
+}
 
 void UProjectile::SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
 {

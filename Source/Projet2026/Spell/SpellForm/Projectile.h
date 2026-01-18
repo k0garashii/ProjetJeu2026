@@ -18,6 +18,9 @@ public:
 	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) override;
 	virtual void HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime) override;
 	virtual void HandleEndCollision(AActor* Actor, ASpellInstance* Instance) override;
+	
+	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
 	int NumberOfProjectiles = 8;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")

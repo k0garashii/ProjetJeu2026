@@ -21,11 +21,15 @@ public:
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnSpellInteractionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	UPROPERTY(BlueprintReadOnly)
 	UProjectileMovementComponent* ProjectileMovement;
 	UPROPERTY(BlueprintReadOnly)
 	UShapeComponent* DetectionComponent;
+	UPROPERTY(BlueprintReadOnly)
+	UShapeComponent* InteractionComponent;
 	UPROPERTY(BlueprintReadOnly)
 	UNiagaraComponent* NiagaraComponent;
 	

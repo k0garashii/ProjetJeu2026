@@ -4,7 +4,8 @@
 
 void UTornado::SetupInstance(ASpellInstance* Instance)
 {
-	CreateBoxCollisionOverlap(Instance, BoxExtent);
+	CreateBoxCollisionOverlap(Instance, DetectionBoxExtent);
+	CreateSpellInteractionBox(Instance, InteractionBoxExtent);
 	CreateMovementComp(Instance, Speed);
 	CreateParticlesComp(Instance, TornadoNiagara);
 	UpdateNiagara(Instance);
@@ -25,7 +26,6 @@ void UTornado::HandleFirstCollision(AActor* Actor, ASpellInstance* instance)
 	UPrimitiveComponent* PhysComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
 	if (PhysComponent && PhysComponent->IsSimulatingPhysics())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Tornado collided with %s"), *Actor->GetName());
 		instance->OverlappingActors.Add(Actor);
 	}
 }
@@ -45,7 +45,11 @@ void UTornado::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, floa
 void UTornado::HandleEndCollision(AActor* Actor, ASpellInstance* Instance)
 {
 	Instance->OverlappingActors.Remove(Actor);
-	UE_LOG(LogTemp, Warning, TEXT("Tornado ended collide with %s"), *Actor->GetName());
+}
+
+void UTornado::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance)
+{
+
 }
 
 void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
@@ -138,8 +142,6 @@ void UTornado::SnapTornadoToGround(ASpellInstance* Instance, float DeltaTime)
 	FVector Start = Instance->GetActorLocation() + FVector(0.f, 0.f, 1000.f);
 	FVector End = Instance->GetActorLocation() - FVector(0.f, 0.f, 10000.f);
 	DrawDebugLine(Instance->GetWorld(), Start, End, FColor::Red, false, 0.1);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Pos Start : %s, Pos End : %s"), *Start.ToString(), *End.ToString());
 	
 	FCollisionQueryParams CollisionParams;
 	

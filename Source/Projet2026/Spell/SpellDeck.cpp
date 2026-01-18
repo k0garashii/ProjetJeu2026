@@ -24,6 +24,15 @@ void USpellDeck::SetSpellData(USpellData* spellData, int index)
 
 void USpellDeck::SetActiveSpell(int index)
 {	
+	if (ActiveSpell != nullptr)
+	{
+		if (ActiveSpell->SpellForm->ShowSpell && ActiveSpell->SpellForm->GetSpawnedActor())
+		{
+			AActor* spawnedActor = ActiveSpell->SpellForm->GetSpawnedActor();
+			spawnedActor->Destroy();
+			spawnedActor = nullptr;
+		}
+	}
 	ActiveSpell = SpellData[index];
 }
 

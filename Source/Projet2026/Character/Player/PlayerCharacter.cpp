@@ -12,22 +12,26 @@
 
 APlayerCharacter::APlayerCharacter()
 {
-	// Set size for collision capsule
+	PrimaryActorTick.bCanEverTick = true;
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 60.0f, 80.0f);
 	CameraBoom->bUsePawnControlRotation = true;
 
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 	
 	SpellDeck = CreateDefaultSubobject<USpellDeck>(TEXT("SpellDeck"));
+}
+
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	VisualizeCurrentSpell();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -40,8 +44,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		
-		EnhancedInputComponent->BindAction(ChoseSpell, ETriggerEvent::Triggered, this, &APlayerCharacter::SelectSpell);
-		EnhancedInputComponent->BindAction(LaunchSpell, ETriggerEvent::Triggered, this, &APlayerCharacter::LaunchCurrentSpell);
+		EnhancedInputComponent->BindAction(ChoseSpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::SelectSpell);
+		EnhancedInputComponent->BindAction(LaunchSpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::LaunchCurrentSpell);
+		
+		EnhancedInputComponent->BindAction(RotateSpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::RotateSpell);
 	}
 	else
 	{
@@ -75,14 +81,36 @@ void APlayerCharacter::SelectSpell(const FInputActionValue& Value)
 		if (SpellIndex >= 0 && SpellIndex < 5)
 		{
 			SpellDeck->SetActiveSpell(SpellIndex);
+			SpellDeck->ActiveSpell->SpellForm->SpawnPreviewActor(this);
 			UE_LOG(LogTemp, Log, TEXT("Sort choisi : Index %d"), SpellIndex);
 		}
+	}
+}
+
+void APlayerCharacter::RotateSpell(const FInputActionValue& Value)
+{
+	float ScrollValue = Value.Get<float>();
+	float RotationStep = 4.0f;
+	if (SpellDeck->ActiveSpell)
+	{
+		SpellDeck->ActiveSpell->SpellForm->RotateSpell(ScrollValue * RotationStep);
 	}
 }
 
 void APlayerCharacter::LaunchCurrentSpell()
 {
 	SpellDeck->LaunchSpell(Cast<AActor>(this));
+}
+
+void APlayerCharacter::VisualizeCurrentSpell()
+{
+	if (USpellData* SpellData = SpellDeck->ActiveSpell)
+	{
+		if (SpellData->SpellForm->ShowSpell)
+		{
+			SpellData->SpellForm->VisualizeSpell(this);
+		}
+	}
 }
 
 void APlayerCharacter::DoMove(float Right, float Forward)

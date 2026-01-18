@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -22,6 +20,7 @@ class APlayerCharacter : public AEntityCharacter
 	
 public:
 	APlayerCharacter();	
+	virtual void Tick( float DeltaTime ) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -35,7 +34,9 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void SelectSpell(const FInputActionValue& Value);
+	void RotateSpell(const FInputActionValue& Value);
 	void LaunchCurrentSpell();
+	void VisualizeCurrentSpell();
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* JumpAction;
@@ -44,9 +45,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* LookAction;
 	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* ChoseSpell;
+	UInputAction* ChoseSpellAction;
 	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* LaunchSpell;
+	UInputAction* LaunchSpellAction;
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* RotateSpellAction;
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Input")

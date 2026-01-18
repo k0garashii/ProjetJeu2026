@@ -6,6 +6,15 @@
 #include "Spell/SpellForm/SpellForm.h"
 #include "SpellData.generated.h"
 
+UENUM(BlueprintType)
+enum class ESpellType : uint8 
+{
+	Fire,
+	Wind,
+	Earth,
+	Water
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class PROJET2026_API USpellData : public UDataAsset
 {
@@ -17,6 +26,8 @@ public:
 	FName SpellName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
 	FString Description;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
+	ESpellType SpellType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "SpellInfo")
 	USpellForm* SpellForm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
