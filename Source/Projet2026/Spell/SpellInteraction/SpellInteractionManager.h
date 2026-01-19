@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,13 +5,19 @@
 #include "Spell/SpellInteraction/SpellAction.h"
 #include "SpellInteractionManager.generated.h"
 
-USTRUCT(BlueprintType)
-struct FInteractionCell 
+USTRUCT()
+struct FInteractionData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Instanced, Category = "Logic")
-	TArray<USpellAction*> Actions;
+	UPROPERTY(EditAnywhere)
+	FName DebugName;
+	UPROPERTY(EditAnywhere)
+	uint32 TypeMask = 0;
+	UPROPERTY(EditAnywhere)
+	uint32 FormMask = 0;
+	UPROPERTY(EditAnywhere)
+	TArray<USpellAction*> Results;
 };
 
 UCLASS()
@@ -21,5 +25,14 @@ class PROJET2026_API USpellInteractionManager : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	TArray<FInteractionCell*> Matrix;
+	void Initialize();
+	FORCEINLINE const FInteractionData* ResolveInteraction(const uint64& Key1, const uint64& Key2) const;
+	
+	//Variable d'exposition dans l'éditeur pour le DataAsset
+	UPROPERTY(EditAnywhere, Category="Spell Interaction")
+	TArray<FInteractionData> Interactions;
+private:
+	//Variable triée pour l'accès rapide en runtime
+	TArray<FInteractionData> InteractionTable;
+	TMap<uint64, uint16> KeyToID;
 };
