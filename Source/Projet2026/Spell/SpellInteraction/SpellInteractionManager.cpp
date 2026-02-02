@@ -1,26 +1,35 @@
 #include "Spell/SpellInteraction/SpellInteractionManager.h"
 
-void USpellInteractionManager::Initialize()
+void USpellInteractionManager::PostLoad()
 {
-	for (const FInteractionData& Data : Interactions)
-	{
-		uint16 NewID = InteractionTable.Num();
-		InteractionTable.Add(Data);
-
-		// FSpellKey Key;
-		// Key.TypeMask = Data.TypeMask;
-		// Key.FormMask = Data.FormMask;
-		//
-		// KeyToID.Add(Key, NewID);
-	}
+	Super::PostLoad();
+	BuildFusionMap();
 }
 
-const FInteractionData* USpellInteractionManager::ResolveInteraction(const uint64& Key1, const uint64& Key2) const
+void USpellInteractionManager::PostEditChangeProperty(FPropertyChangedEvent& Event)
 {
-	// if (const uint16* ID = KeyToID.Find(Key))
-	// {
-	// 	return &InteractionTable[*ID];
-	// }
+	Super::PostEditChangeProperty(Event);
+	BuildFusionMap();
+}
 
-	return nullptr; // → fallback générique
+USpellData* USpellInteractionManager::GetFusionResult(FGameplayTagContainer& Elements)
+{
+	FSpellFusionKey SearchKey(Elements);
+	USpellData** FoundPtr = FusionMap.Find(SearchKey);
+    
+	if (FoundPtr)
+		return *FoundPtr;
+    
+	return nullptr;
+}
+
+void USpellInteractionManager::BuildFusionMap()
+{
+	FusionMap.Empty();
+
+	for (const FInteractionData& Rule : Rules)
+	{
+		FSpellFusionKey Key(Rule.Elements);
+		FusionMap.Add(Key, Rule.ResultSpell);
+	}
 }

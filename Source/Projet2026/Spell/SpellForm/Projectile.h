@@ -12,7 +12,7 @@ class PROJET2026_API UProjectile : public USpellForm
 	GENERATED_BODY()
 public:
 	virtual void SetupInstance(ASpellInstance* Instance) override;
-	virtual void InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell) override;
+	virtual void InitializeSpellForm(AActor* Actor, USpellData* SpellData) override;
 	virtual void HandleTick(ASpellInstance* SpellInstance, float DeltaTime) override;
 	
 	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) override;
@@ -33,7 +33,7 @@ public:
 	FVector BoxExtent = FVector(10.f, 10.f, 10.f);
 	
 private:
-	void SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell);
+	void SpawnSpell(AActor* Actor, USpellData* SpellData);
 	FVector SetPosition(int i);
 	FQuat SetRotation(UWorld* World, AActor* Actor, FVector SpellPosition);
 };

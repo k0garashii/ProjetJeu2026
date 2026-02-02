@@ -10,9 +10,9 @@ void UProjectile::SetupInstance(ASpellInstance* Instance)
 	CreateMovementComp(Instance, Speed);
 }
 
-void UProjectile::InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
+void UProjectile::InitializeSpellForm(AActor* Actor, USpellData* SpellData)
 {
-	SpawnSpell(Actor, Spell);
+	SpawnSpell(Actor, SpellData);
 }
 
 void UProjectile::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
@@ -27,6 +27,7 @@ void UProjectile::HandleFirstCollision(AActor* Actor, ASpellInstance* Instance)
 		Entity->MyTakeDamage(Damage);
 		Instance->DeactivateSpell();
 	}
+	IsInteraction(Actor, Instance);
 }
 
 void UProjectile::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime){ }
@@ -38,7 +39,7 @@ void UProjectile::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* 
 	UE_LOG(LogTemp, Log, TEXT("Spell %s"), *Spell->GetName());
 }
 
-void UProjectile::SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
+void UProjectile::SpawnSpell(AActor* Actor, USpellData* SpellData)
 {
 	UWorld* world = Actor->GetWorld();
 	FTransform ActorTransform = Actor->GetActorTransform();
@@ -56,9 +57,9 @@ void UProjectile::SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
 		
 		FTransform SpawnTransform(Rotation, FinalLocation);
 		
-		ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(Spell, SpawnTransform);
+		ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(SpellData->Prefab, SpawnTransform);
 
-		SpellInstance->Initialize(Actor, this);
+		SpellInstance->Initialize(Actor, this, SpellData);
 		SpellInstance->ProjectileMovement->Velocity = Rotation.GetForwardVector() * Speed;
 		SpellInstance->ActivateSpell(); 
 	}

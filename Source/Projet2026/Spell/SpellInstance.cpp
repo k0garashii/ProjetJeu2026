@@ -1,5 +1,7 @@
 #include "Spell/SpellInstance.h"
 
+#include "Spell/SpellData.h"
+
 ASpellInstance::ASpellInstance()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,9 +17,10 @@ void ASpellInstance::Tick(float DeltaTime)
 	}
 }
 
-void ASpellInstance::Initialize(AActor* launcher, USpellForm* form)
+void ASpellInstance::Initialize(AActor* launcher, USpellForm* form, USpellData* spellData)
 {
 	SpellForm = form;
+	SpellData = spellData;
 	Launcher = launcher;
 	if (SpellForm)
 	{

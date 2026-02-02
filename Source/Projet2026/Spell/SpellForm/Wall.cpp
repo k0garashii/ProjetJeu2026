@@ -1,4 +1,6 @@
 #include "Spell/SpellForm/Wall.h"
+
+#include "Spell/SpellData.h"
 #include "Spell/SpellInstance.h"
 
 void UWall::SetupInstance(ASpellInstance* Instance)
@@ -6,9 +8,9 @@ void UWall::SetupInstance(ASpellInstance* Instance)
 
 }
 
-void UWall::InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
+void UWall::InitializeSpellForm(AActor* Actor, USpellData* SpellData)
 {
-	SpawnSpell(Actor, Spell);
+	SpawnSpell(Actor, SpellData);
 }
 
 void UWall::HandleTick(ASpellInstance* SpellInstance, float DeltaTime)
@@ -36,7 +38,7 @@ void UWall::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instan
 
 }
 
-void UWall::SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
+void UWall::SpawnSpell(AActor* Actor, USpellData* SpellData)
 {
 	UWorld* World = Actor->GetWorld();
 	FActorSpawnParameters SpawnParams;
@@ -47,8 +49,8 @@ void UWall::SpawnSpell(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
 	FRotator SpawnRotation = SpawnedActor->GetActorRotation();
 	FTransform SpawnTransform(SpawnRotation, SpawnLocation);
 	
-	ASpellInstance* SpellInstance =  World->SpawnActor<ASpellInstance>(Spell, SpawnTransform);
+	ASpellInstance* SpellInstance =  World->SpawnActor<ASpellInstance>(SpellData->Prefab, SpawnTransform);
 
-	SpellInstance->Initialize(Actor, this);
+	SpellInstance->Initialize(Actor, this, SpellData);
 	SpellInstance->ActivateSpell(); 
 }

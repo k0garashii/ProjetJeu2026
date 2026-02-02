@@ -1,8 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "Spell/SpellInteraction/SpellAction.h"
+#include "Spell/SpellData.h"
 #include "SpellInteractionManager.generated.h"
 
 USTRUCT()
@@ -11,28 +12,64 @@ struct FInteractionData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	FName DebugName;
+	FGameplayTagContainer Elements; // ex: {Fire, Earth}
+
 	UPROPERTY(EditAnywhere)
-	uint32 TypeMask = 0;
-	UPROPERTY(EditAnywhere)
-	uint32 FormMask = 0;
-	UPROPERTY(EditAnywhere)
-	TArray<USpellAction*> Results;
+	USpellData* ResultSpell; // ex: MagmaBall
 };
+
+USTRUCT()
+struct FSpellFusionKey
+{
+	GENERATED_BODY()
+
+	TArray<FGameplayTag> Tags;
+
+	FSpellFusionKey() {}
+
+	explicit FSpellFusionKey(const FGameplayTagContainer& Container)
+	{
+		Container.GetGameplayTagArray(Tags);
+		Tags.Sort([](const FGameplayTag& A, const FGameplayTag& B)
+		{
+			return A.GetTagName().LexicalLess(B.GetTagName());
+		});
+	}
+
+	bool operator==(const FSpellFusionKey& Other) const
+	{
+		return Tags == Other.Tags;
+	}
+};
+
+FORCEINLINE uint32 GetTypeHash(const FSpellFusionKey& Key)
+{
+	uint32 Hash = 0;
+	for (const FGameplayTag& Tag : Key.Tags)
+	{
+		Hash = HashCombine(Hash, GetTypeHash(Tag));
+	}
+	return Hash;
+}
 
 UCLASS()
 class PROJET2026_API USpellInteractionManager : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	void Initialize();
-	FORCEINLINE const FInteractionData* ResolveInteraction(const uint64& Key1, const uint64& Key2) const;
+	virtual void PostLoad() override;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FInteractionData> Rules;
+
+	TMap<FSpellFusionKey, USpellData*> FusionMap;
 	
-	//Variable d'exposition dans l'éditeur pour le DataAsset
-	UPROPERTY(EditAnywhere, Category="Spell Interaction")
-	TArray<FInteractionData> Interactions;
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& Event) override;
+#endif
+
+	USpellData* GetFusionResult(FGameplayTagContainer& Elements);
+
 private:
-	//Variable triée pour l'accès rapide en runtime
-	TArray<FInteractionData> InteractionTable;
-	TMap<uint64, uint16> KeyToID;
+	void BuildFusionMap();
 };

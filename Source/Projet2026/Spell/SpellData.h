@@ -4,16 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "Engine/DataAsset.h"
 #include "Spell/SpellForm/SpellForm.h"
+#include "GameplayTagContainer.h"
 #include "SpellData.generated.h"
-
-UENUM(BlueprintType)
-enum class ESpellType : uint8 
-{
-	Fire,
-	Wind,
-	Earth,
-	Water
-};
 
 UCLASS(Blueprintable, BlueprintType)
 class PROJET2026_API USpellData : public UDataAsset
@@ -27,7 +19,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
 	FString Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
-	ESpellType SpellType;
+	FGameplayTag ElementTag;
+	UPROPERTY(EditAnywhere, Category = "SpellInfo")
+	FGameplayTag FormTag;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "SpellInfo")
 	USpellForm* SpellForm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")

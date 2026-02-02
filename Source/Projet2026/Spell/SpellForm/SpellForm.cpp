@@ -122,3 +122,26 @@ void USpellForm::RotateSpell(float ScrollValue)
 		SpawnedActor->SetActorRotation(CurrentRotation);
 	}
 }
+
+void USpellForm::IsInteraction(AActor* Actor, ASpellInstance* Instance)
+{
+	if (ASpellInstance* SpellInstance = Cast<ASpellInstance>(Actor))
+	{
+		FGameplayTagContainer CombinedTags;
+		CombinedTags.AddTag(Instance->GetSpellData()->ElementTag);
+		CombinedTags.AddTag(SpellInstance->GetSpellData()->ElementTag);
+
+		USpellData* ResultData = InteractionManager->GetFusionResult(CombinedTags);
+
+		if (ResultData && ResultData->Prefab)
+		{
+			// 3. C'est ici qu'on accède au PREFAB lié au résultat
+			UWorld* World = GetWorld();
+			World->SpawnActor<ASpellInstance>(ResultData->Prefab, GetActorLocation(), GetActorRotation());
+	        
+			// Nettoyage des anciens sorts
+			this->Destroy();
+			Other->Destroy();
+		}
+	}
+}

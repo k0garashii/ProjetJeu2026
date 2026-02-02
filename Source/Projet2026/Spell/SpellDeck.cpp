@@ -43,7 +43,7 @@ void USpellDeck::LaunchSpell(AActor* actor)
 	
 	if (ActiveSpell && ActiveSpell->SpellForm)
 	{
-		ActiveSpell->SpellForm->InitializeSpellForm(actor, ActiveSpell->Prefab);
+		ActiveSpell->SpellForm->InitializeSpellForm(actor, ActiveSpell);
 		Spells.Add(CooldownSpell(ActiveSpell, ActiveSpell->Cooldown));
 	}
 }

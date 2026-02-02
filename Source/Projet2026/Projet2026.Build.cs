@@ -20,10 +20,13 @@ public class Projet2026 : ModuleRules
 			"UMG",
 			"Slate",
 			"SlateCore",
-			"Niagara"
+			"Niagara",          
+			"GameplayAbilities", 
+			"GameplayTags",
+			"GameplayTasks" 
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "NaniteUtilities" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "NaniteUtilities", "GameplayAbilities", "GameplayAbilities" });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"Projet2026",

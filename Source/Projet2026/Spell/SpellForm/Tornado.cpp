@@ -1,5 +1,6 @@
 #include "Spell/SpellForm/Tornado.h"
 #include "NiagaraComponent.h"
+#include "Spell/SpellData.h"
 #include "Spell/SpellInstance.h"
 
 void UTornado::SetupInstance(ASpellInstance* Instance)
@@ -11,9 +12,9 @@ void UTornado::SetupInstance(ASpellInstance* Instance)
 	UpdateNiagara(Instance);
 }
 
-void UTornado::InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell)
+void UTornado::InitializeSpellForm(AActor* Actor, USpellData* SpellData)
 {
-	SpawnSpell(Actor, Spell);
+	SpawnSpell(Actor, SpellData);
 }
 
 void UTornado::HandleTick(ASpellInstance* Instance, float DeltaTime)
@@ -52,7 +53,7 @@ void UTornado::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Ins
 
 }
 
-void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
+void UTornado::SpawnSpell(AActor* actor, USpellData* SpellData)
 {
 	UWorld* world = actor->GetWorld();
 	
@@ -61,9 +62,9 @@ void UTornado::SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell)
 	
 	FTransform SpawnTransform(Rotation, FinalLocation);
 	
-	ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(spell, SpawnTransform);
+	ASpellInstance* SpellInstance =  world->SpawnActor<ASpellInstance>(SpellData->Prefab, SpawnTransform);
 
-	SpellInstance->Initialize(actor, this);
+	SpellInstance->Initialize(actor, this, SpellData);
 	SpellInstance->ProjectileMovement->Velocity = actor->GetActorForwardVector() * Speed;
 	SpellInstance->ActivateSpell();
 }

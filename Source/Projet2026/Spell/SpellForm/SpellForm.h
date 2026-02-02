@@ -5,6 +5,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "SpellForm.generated.h"
 
+class USpellData;
 class ASpellInstance;
 
 UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
@@ -13,7 +14,7 @@ class PROJET2026_API USpellForm : public UDataAsset
 	GENERATED_BODY()
 public:	
 	virtual void SetupInstance(ASpellInstance* Instance) {}
-	virtual void InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell) PURE_VIRTUAL(USpellForm::InitializeSpellForm, UE_LOG(LogTemp, Fatal, TEXT("InitialSpellForm non implemente dans %s"), *GetName()););
+	virtual void InitializeSpellForm(AActor* Actor, USpellData* SpellData) PURE_VIRTUAL(USpellForm::InitializeSpellForm, UE_LOG(LogTemp, Fatal, TEXT("InitialSpellForm non implemente dans %s"), *GetName()););
 	virtual void HandleTick(ASpellInstance* Instance, float DeltaTime) PURE_VIRTUAL(USpellForm::HandleTick, UE_LOG(LogTemp, Fatal, TEXT("HandleTick non implemente dans %s"), *GetName()); );
 	
 	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) PURE_VIRTUAL(USpellForm::HandleFirstCollision, UE_LOG(LogTemp, Fatal, TEXT("HandleFirstCollision non implemente dans %s"), *GetName()); );
@@ -43,6 +44,8 @@ protected:
 	void CreateSpellInteractionBox(ASpellInstance* Instance, FVector BoxExtent);
 	void CreateMovementComp(ASpellInstance* Instance, float Speed);
 	void CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* ParticleSystem);
+	
+	void IsInteraction(AActor* Actor, ASpellInstance* Instance);
 	
 	AActor* SpawnedActor = nullptr;
 };

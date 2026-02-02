@@ -11,7 +11,7 @@ class PROJET2026_API UTornado : public USpellForm
 	GENERATED_BODY()
 public:
 	virtual void SetupInstance(ASpellInstance* Instance) override;
-	virtual void InitializeSpellForm(AActor* Actor, TSubclassOf<ASpellInstance> Spell) override;
+	virtual void InitializeSpellForm(AActor* Actor, USpellData* SpellData) override;
 	virtual void HandleTick(ASpellInstance* Instance, float DeltaTime) override;
 	
 	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) override;
@@ -56,7 +56,7 @@ public:
 	class UNiagaraSystem* TornadoNiagara;
 	
 private:
-	void SpawnSpell(AActor* actor, TSubclassOf<ASpellInstance> spell);
+	void SpawnSpell(AActor* actor, USpellData* SpellData);
 	FVector ApplyTornado(FVector spellPos, FVector elementPos, float DeltaTime);
 	void UpdateNiagara(ASpellInstance* Instance);
 	UFUNCTION()

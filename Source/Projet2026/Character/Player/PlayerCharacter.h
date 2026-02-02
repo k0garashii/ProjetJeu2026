@@ -4,6 +4,8 @@
 #include "Character/EntityCharacter.h"
 #include "Logging/LogMacros.h"
 #include "Spell/SpellDeck.h"
+#include "AbilitySystemInterface.h" // Import indispensable
+#include "AbilitySystemComponent.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -14,7 +16,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(abstract)
-class APlayerCharacter : public AEntityCharacter
+class APlayerCharacter : public AEntityCharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -28,6 +30,11 @@ public:
 	UCameraComponent* FollowCamera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpellDeck* SpellDeck;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
+	UAbilitySystemComponent* AbilitySystemComponent;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
