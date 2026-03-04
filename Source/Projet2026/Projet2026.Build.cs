@@ -23,7 +23,8 @@ public class Projet2026 : ModuleRules
 			"Niagara",          
 			"GameplayAbilities", 
 			"GameplayTags",
-			"GameplayTasks" 
+			"GameplayTasks",
+			"DeveloperSettings"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "NaniteUtilities", "GameplayAbilities", "GameplayAbilities" });

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Subsystems/WorldSubsystem.h"
 #include "Spell/SpellInteraction/SpellInteractionManager.h"
 #include "SpellInteractionSubsystem.generated.h"
@@ -8,13 +7,11 @@ UCLASS()
 class PROJET2026_API USpellInteractionSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
-
 public:
-	UPROPERTY()
-	USpellInteractionManager* Manager;
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	USpellData* GetResult(FGameplayTagContainer& Elements);
 
-	USpellData* GetResult(FGameplayTagContainer& Elements) const
-	{
-		return Manager ? Manager->GetFusionResult(Elements) : nullptr;
-	}
+private:
+	UPROPERTY()
+	USpellInteractionManager* ActiveManager;
 };

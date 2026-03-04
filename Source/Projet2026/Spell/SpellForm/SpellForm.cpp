@@ -65,6 +65,9 @@ void USpellForm::CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* N
 
 void USpellForm::SpawnPreviewActor(AActor* Player)
 {
+	if (!ShowSpell)
+		return;
+	
 	UWorld* world = Player->GetWorld();
 	FVector SpawnLocation = Player->GetActorLocation() + Player->GetActorForwardVector() * 200.f;
 	FRotator SpawnRotation = Player->GetActorRotation();
@@ -125,23 +128,23 @@ void USpellForm::RotateSpell(float ScrollValue)
 
 void USpellForm::IsInteraction(AActor* Actor, ASpellInstance* Instance)
 {
-	if (ASpellInstance* SpellInstance = Cast<ASpellInstance>(Actor))
-	{
-		FGameplayTagContainer CombinedTags;
-		CombinedTags.AddTag(Instance->GetSpellData()->ElementTag);
-		CombinedTags.AddTag(SpellInstance->GetSpellData()->ElementTag);
-
-		USpellData* ResultData = InteractionManager->GetFusionResult(CombinedTags);
-
-		if (ResultData && ResultData->Prefab)
-		{
-			// 3. C'est ici qu'on accède au PREFAB lié au résultat
-			UWorld* World = GetWorld();
-			World->SpawnActor<ASpellInstance>(ResultData->Prefab, GetActorLocation(), GetActorRotation());
-	        
-			// Nettoyage des anciens sorts
-			this->Destroy();
-			Other->Destroy();
-		}
-	}
+// 	if (ASpellInstance* SpellInstance = Cast<ASpellInstance>(Actor))
+// 	{
+// 		FGameplayTagContainer CombinedTags;
+// 		CombinedTags.AddTag(Instance->GetSpellData()->ElementTag);
+// 		CombinedTags.AddTag(SpellInstance->GetSpellData()->ElementTag);
+//
+// 		USpellData* ResultData = InteractionManager->GetFusionResult(CombinedTags);
+//
+// 		if (ResultData && ResultData->Prefab)
+// 		{
+// 			// 3. C'est ici qu'on accède au PREFAB lié au résultat
+// 			UWorld* World = GetWorld();
+// 			World->SpawnActor<ASpellInstance>(ResultData->Prefab, GetActorLocation(), GetActorRotation());
+// 	        
+// 			// Nettoyage des anciens sorts
+// 			this->Destroy();
+// 			Other->Destroy();
+// 		}
+// 	}
 }

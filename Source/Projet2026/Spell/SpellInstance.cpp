@@ -1,6 +1,7 @@
 #include "Spell/SpellInstance.h"
 
 #include "Spell/SpellData.h"
+#include "System/SpellInteractionSubsystem.h"
 
 ASpellInstance::ASpellInstance()
 {
@@ -62,9 +63,25 @@ void ASpellInstance::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 
 void ASpellInstance::OnSpellInteractionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASpellInstance* spell = Cast<ASpellInstance>(OtherActor);
-	if (OtherActor != Launcher && spell != this)
+	ASpellInstance* OtherSpell = Cast<ASpellInstance>(OtherActor);
+    
+	if (OtherSpell && OtherSpell != this)
 	{
-		SpellForm->HandleSpellInteraction(spell, this);
+		FGameplayTagContainer CombinedTags;
+		CombinedTags.AddTag(this->SpellData->ElementTag);
+		CombinedTags.AddTag(OtherSpell->SpellData->ElementTag);
+
+		USpellInteractionSubsystem* Subsystem = GetWorld()->GetSubsystem<USpellInteractionSubsystem>();
+		USpellData* ResultingSpellData = Subsystem->GetResult(CombinedTags);
+
+		if (ResultingSpellData)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spells Interacted: %s + %s = %s"), *this->SpellData->GetName(), *OtherSpell->SpellData->GetName(), *ResultingSpellData->GetName());
+			DeactivateSpell();
+			this->Destroy();
+			OtherSpell->DeactivateSpell();
+			OtherSpell->Destroy();
+			ResultingSpellData->SpellForm->InitializeSpellForm(Launcher, ResultingSpellData);
+		}
 	}
 }
