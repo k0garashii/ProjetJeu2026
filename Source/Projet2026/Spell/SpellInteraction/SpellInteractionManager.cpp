@@ -12,24 +12,20 @@ void USpellInteractionManager::PostEditChangeProperty(FPropertyChangedEvent& Eve
 	BuildFusionMap();
 }
 
-USpellData* USpellInteractionManager::GetFusionResult(FGameplayTagContainer& Elements)
+USpellData* USpellInteractionManager::GetFusionResult(FGameplayTagContainer& Elements, const FGameplayTagContainer& Forms)
 {
-	FSpellFusionKey SearchKey(Elements);
+	FSpellFusionKey SearchKey(Elements, Forms);
 	USpellData** FoundPtr = FusionMap.Find(SearchKey);
     
-	if (FoundPtr)
-		return *FoundPtr;
-    
-	return nullptr;
+	return FoundPtr ? *FoundPtr : nullptr;
 }
 
 void USpellInteractionManager::BuildFusionMap()
 {
 	FusionMap.Empty();
-
 	for (const FInteractionData& Rule : Rules)
 	{
-		FSpellFusionKey Key(Rule.Elements);
+		FSpellFusionKey Key(Rule.Elements, Rule.Forms);
 		FusionMap.Add(Key, Rule.ResultSpell);
 	}
 }

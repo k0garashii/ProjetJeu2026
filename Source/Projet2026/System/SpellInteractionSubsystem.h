@@ -9,7 +9,7 @@ class PROJET2026_API USpellInteractionSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	USpellData* GetResult(FGameplayTagContainer& Elements);
+	USpellData* GetResult(FGameplayTagContainer& Elements, FGameplayTagContainer& Forms);
 
 private:
 	UPROPERTY()

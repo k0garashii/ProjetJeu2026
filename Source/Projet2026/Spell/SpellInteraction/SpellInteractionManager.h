@@ -12,10 +12,13 @@ struct FInteractionData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	FGameplayTagContainer Elements; // ex: {Fire, Earth}
+	FGameplayTagContainer Elements;
+	
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	FGameplayTagContainer Forms; 
 
 	UPROPERTY(EditAnywhere)
-	USpellData* ResultSpell; // ex: MagmaBall
+	USpellData* ResultSpell;
 };
 
 USTRUCT()
@@ -23,29 +26,39 @@ struct FSpellFusionKey
 {
 	GENERATED_BODY()
 
-	TArray<FGameplayTag> Tags;
+	TArray<FGameplayTag> ElementTags;
+	TArray<FGameplayTag> FormTags;
 
 	FSpellFusionKey() {}
 
-	explicit FSpellFusionKey(const FGameplayTagContainer& Container)
+	FSpellFusionKey(const FGameplayTagContainer& InElements, const FGameplayTagContainer& InForms)
 	{
-		Container.GetGameplayTagArray(Tags);
-		Tags.Sort([](const FGameplayTag& A, const FGameplayTag& B)
+		auto SortTags = [](const FGameplayTagContainer& Source, TArray<FGameplayTag>& Target)
 		{
-			return A.GetTagName().LexicalLess(B.GetTagName());
-		});
+			Source.GetGameplayTagArray(Target);
+			Target.Sort([](const FGameplayTag& A, const FGameplayTag& B) {
+				return A.GetTagName().LexicalLess(B.GetTagName());
+			});
+		};
+
+		SortTags(InElements, ElementTags);
+		SortTags(InForms, FormTags);
 	}
 
 	bool operator==(const FSpellFusionKey& Other) const
 	{
-		return Tags == Other.Tags;
+		return ElementTags == Other.ElementTags && FormTags == Other.FormTags;
 	}
 };
 
 FORCEINLINE uint32 GetTypeHash(const FSpellFusionKey& Key)
 {
 	uint32 Hash = 0;
-	for (const FGameplayTag& Tag : Key.Tags)
+	for (const FGameplayTag& Tag : Key.ElementTags)
+	{
+		Hash = HashCombine(Hash, GetTypeHash(Tag));
+	}
+	for (const FGameplayTag& Tag : Key.FormTags)
 	{
 		Hash = HashCombine(Hash, GetTypeHash(Tag));
 	}
@@ -68,7 +81,7 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& Event) override;
 #endif
 
-	USpellData* GetFusionResult(FGameplayTagContainer& Elements);
+	USpellData* GetFusionResult(FGameplayTagContainer& Elements, const FGameplayTagContainer& Forms);
 
 private:
 	void BuildFusionMap();

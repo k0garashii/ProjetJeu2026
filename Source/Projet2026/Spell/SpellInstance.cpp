@@ -67,14 +67,17 @@ void ASpellInstance::OnSpellInteractionOverlap(UPrimitiveComponent* OverlappedCo
     
 	if (OtherSpell && OtherSpell != this)
 	{
-		FGameplayTagContainer CombinedTags;
-		CombinedTags.AddTag(this->SpellData->ElementTag);
-		CombinedTags.AddTag(OtherSpell->SpellData->ElementTag);
+		FGameplayTagContainer CombinedElements;
+		CombinedElements.AddTag(this->SpellData->ElementTag);
+		CombinedElements.AddTag(OtherSpell->SpellData->ElementTag);
+		
+		FGameplayTagContainer CombinedForms;
+		CombinedForms.AddTag(this->SpellData->FormTag);
+		CombinedForms.AddTag(OtherSpell->SpellData->FormTag);
 
 		USpellInteractionSubsystem* Subsystem = GetWorld()->GetSubsystem<USpellInteractionSubsystem>();
-		USpellData* ResultingSpellData = Subsystem->GetResult(CombinedTags);
 
-		if (ResultingSpellData)
+		if (USpellData* ResultingSpellData = Subsystem->GetResult(CombinedElements, CombinedForms))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Spells Interacted: %s + %s = %s"), *this->SpellData->GetName(), *OtherSpell->SpellData->GetName(), *ResultingSpellData->GetName());
 			DeactivateSpell();
