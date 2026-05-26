@@ -33,11 +33,6 @@ void UWall::HandleEndCollision(AActor* Actor, ASpellInstance* Instance)
 
 }
 
-void UWall::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance)
-{
-
-}
-
 void UWall::SpawnSpell(AActor* Actor, USpellData* SpellData)
 {
 	UWorld* World = Actor->GetWorld();

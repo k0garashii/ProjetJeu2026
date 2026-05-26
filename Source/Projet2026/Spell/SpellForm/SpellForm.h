@@ -17,11 +17,12 @@ public:
 	virtual void InitializeSpellForm(AActor* Actor, USpellData* SpellData) PURE_VIRTUAL(USpellForm::InitializeSpellForm, UE_LOG(LogTemp, Fatal, TEXT("InitialSpellForm non implemente dans %s"), *GetName()););
 	virtual void HandleTick(ASpellInstance* Instance, float DeltaTime) PURE_VIRTUAL(USpellForm::HandleTick, UE_LOG(LogTemp, Fatal, TEXT("HandleTick non implemente dans %s"), *GetName()); );
 	
+	//This instance, link to this spellForm, and the actor who interacted
 	virtual void HandleFirstCollision(AActor* Actor, ASpellInstance* Instance) PURE_VIRTUAL(USpellForm::HandleFirstCollision, UE_LOG(LogTemp, Fatal, TEXT("HandleFirstCollision non implemente dans %s"), *GetName()); );
 	virtual void HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime) PURE_VIRTUAL(USpellForm::HandleTickCollision, UE_LOG(LogTemp, Fatal, TEXT("HandleTickCollision non implemente dans %s"), *GetName()); );
 	virtual void HandleEndCollision(AActor* Actor, ASpellInstance* Instance) PURE_VIRTUAL(USpellForm::HandleEndCollision, UE_LOG(LogTemp, Fatal, TEXT("HandleEndCollision non implemente dans %s"), *GetName()); );
 	
-	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) PURE_VIRTUAL(USpellForm::HandleSpellInteraction, UE_LOG(LogTemp, Fatal, TEXT("HandleSpellInteraction non implemente dans %s"), *GetName()); );
+	virtual void HandleSpellInteraction(ASpellInstance* OtherSpell, ASpellInstance* Instance);
 	
 	virtual void SpawnPreviewActor(AActor* Player);
 	virtual void VisualizeSpell(AActor* Player);

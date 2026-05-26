@@ -48,11 +48,6 @@ void UTornado::HandleEndCollision(AActor* Actor, ASpellInstance* Instance)
 	Instance->OverlappingActors.Remove(Actor);
 }
 
-void UTornado::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance)
-{
-
-}
-
 void UTornado::SpawnSpell(AActor* actor, USpellData* SpellData)
 {
 	UWorld* world = actor->GetWorld();

@@ -20,8 +20,6 @@ public:
 	virtual void HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime) override;
 	virtual void HandleEndCollision(AActor* Actor, ASpellInstance* Instance) override;
 	
-	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) override;
-	
 	void SpawnSpell(AActor* Actor, USpellData* SpellData);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")

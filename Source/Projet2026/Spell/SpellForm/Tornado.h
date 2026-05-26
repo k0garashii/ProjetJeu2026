@@ -18,8 +18,6 @@ public:
 	virtual void HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime) override;
 	virtual void HandleEndCollision(AActor* Actor, ASpellInstance* Instance) override;
 	
-	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) override;
-	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Spawn Parameters")
 	float Offset = 100.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Spawn Parameters")

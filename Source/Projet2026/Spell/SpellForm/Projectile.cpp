@@ -33,11 +33,6 @@ void UProjectile::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, f
 
 void UProjectile::HandleEndCollision(AActor* Actor, ASpellInstance* Instance) { }
 
-void UProjectile::HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance)
-{
-	UE_LOG(LogTemp, Log, TEXT("Spell %s"), *Spell->GetName());
-}
-
 void UProjectile::SpawnSpell(AActor* Actor, USpellData* SpellData)
 {
 	UWorld* world = Actor->GetWorld();

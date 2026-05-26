@@ -4,6 +4,8 @@
 #include "Character/Player/PlayerCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Spell/SpellInstance.h"
+#include "System/SpellInteractionSubsystem.h"
+
 
 void USpellForm::CreateBoxCollisionOverlap(ASpellInstance* Instance, FVector BoxExtent)
 {
@@ -123,5 +125,31 @@ void USpellForm::RotateSpell(float ScrollValue)
 		FRotator CurrentRotation = SpawnedActor->GetActorRotation();
 		CurrentRotation.Yaw += ScrollValue;
 		SpawnedActor->SetActorRotation(CurrentRotation);
+	}
+}
+
+void USpellForm::HandleSpellInteraction(ASpellInstance* OtherSpell, ASpellInstance* Instance)
+{
+	FGameplayTagContainer CombinedElements;
+	CombinedElements.AddTag(Instance->GetSpellData()->ElementTag);
+	CombinedElements.AddTag(OtherSpell->GetSpellData()->ElementTag);
+		
+	FGameplayTagContainer CombinedForms;
+	CombinedForms.AddTag(Instance->GetSpellData()->FormTag);
+	CombinedForms.AddTag(OtherSpell->GetSpellData()->FormTag);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Attempting Spell Interaction: %s + %s"), *Instance->GetSpellData()->GetName(), *OtherSpell->GetSpellData()->GetName());
+
+	UWorld* World = Instance->GetWorld();
+	USpellInteractionSubsystem* Subsystem = World->GetSubsystem<USpellInteractionSubsystem>();
+
+	if (USpellData* ResultingSpellData = Subsystem->GetResult(CombinedElements, CombinedForms))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spells Interacted: %s + %s = %s"), *Instance->GetSpellData()->GetName(), *OtherSpell->GetSpellData()->GetName(), *ResultingSpellData->GetName());
+		Instance->DeactivateSpell();
+		Instance->Destroy();
+		OtherSpell->DeactivateSpell();
+		OtherSpell->Destroy();
+		ResultingSpellData->SpellForm->InitializeSpellForm(Instance->Launcher, ResultingSpellData);
 	}
 }

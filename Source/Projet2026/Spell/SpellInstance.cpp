@@ -1,7 +1,6 @@
 #include "Spell/SpellInstance.h"
 
 #include "Spell/SpellData.h"
-#include "System/SpellInteractionSubsystem.h"
 
 ASpellInstance::ASpellInstance()
 {
@@ -65,24 +64,6 @@ void ASpellInstance::OnSpellInteractionOverlap(UPrimitiveComponent* OverlappedCo
     
 	if (OtherSpell && OtherSpell != this)
 	{
-		FGameplayTagContainer CombinedElements;
-		CombinedElements.AddTag(this->SpellData->ElementTag);
-		CombinedElements.AddTag(OtherSpell->SpellData->ElementTag);
-		
-		FGameplayTagContainer CombinedForms;
-		CombinedForms.AddTag(this->SpellData->FormTag);
-		CombinedForms.AddTag(OtherSpell->SpellData->FormTag);
-
-		USpellInteractionSubsystem* Subsystem = GetWorld()->GetSubsystem<USpellInteractionSubsystem>();
-
-		if (USpellData* ResultingSpellData = Subsystem->GetResult(CombinedElements, CombinedForms))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Spells Interacted: %s + %s = %s"), *this->SpellData->GetName(), *OtherSpell->SpellData->GetName(), *ResultingSpellData->GetName());
-			DeactivateSpell();
-			this->Destroy();
-			OtherSpell->DeactivateSpell();
-			OtherSpell->Destroy();
-			ResultingSpellData->SpellForm->InitializeSpellForm(Launcher, ResultingSpellData);
-		}
+		SpellForm->HandleSpellInteraction(OtherSpell, this);
 	}
 }
