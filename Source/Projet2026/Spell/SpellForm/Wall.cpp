@@ -49,8 +49,13 @@ void UWall::SpawnSpell(AActor* Actor, USpellData* SpellData)
 	FRotator SpawnRotation = SpawnedActor->GetActorRotation();
 	FTransform SpawnTransform(SpawnRotation, SpawnLocation);
 	
-	ASpellInstance* SpellInstance =  World->SpawnActor<ASpellInstance>(SpellData->Prefab, SpawnTransform);
+	ASpellInstance* SpellInstance = World->SpawnActor<ASpellInstance>(
+		SpellData->Prefab,
+		SpawnTransform,
+		SpawnParams
+	);
 
 	SpellInstance->Initialize(Actor, this, SpellData);
 	SpellInstance->ActivateSpell(); 
 }
+

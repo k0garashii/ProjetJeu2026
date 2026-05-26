@@ -27,7 +27,6 @@ void UProjectile::HandleFirstCollision(AActor* Actor, ASpellInstance* Instance)
 		Entity->MyTakeDamage(Damage);
 		Instance->DeactivateSpell();
 	}
-	IsInteraction(Actor, Instance);
 }
 
 void UProjectile::HandleTickCollision(AActor* Actor, ASpellInstance* Instance, float DeltaTime){ }

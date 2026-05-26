@@ -22,7 +22,7 @@ public:
 	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
-	int NumberOfProjectiles = 8;	
+	int NumberOfProjectiles = 8;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
 	float Speed = 10000;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")

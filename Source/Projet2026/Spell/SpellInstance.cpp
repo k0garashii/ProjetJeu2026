@@ -13,9 +13,7 @@ void ASpellInstance::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	SpellForm->HandleTick(this, DeltaTime);
 	for (AActor* actor : OverlappingActors)
-	{
 		SpellForm->HandleTickCollision(actor, this, DeltaTime);
-	}
 }
 
 void ASpellInstance::Initialize(AActor* launcher, USpellForm* form, USpellData* spellData)

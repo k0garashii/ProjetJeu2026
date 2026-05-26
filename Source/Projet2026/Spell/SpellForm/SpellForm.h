@@ -23,8 +23,8 @@ public:
 	
 	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) PURE_VIRTUAL(USpellForm::HandleSpellInteraction, UE_LOG(LogTemp, Fatal, TEXT("HandleSpellInteraction non implemente dans %s"), *GetName()); );
 	
-	void SpawnPreviewActor(AActor* Player);
-	void VisualizeSpell(AActor* Player);
+	virtual void SpawnPreviewActor(AActor* Player);
+	virtual void VisualizeSpell(AActor* Player);
 	void RotateSpell(float ScrollValue);
 	AActor* GetSpawnedActor() const { return SpawnedActor; }
 	
@@ -44,8 +44,6 @@ protected:
 	void CreateSpellInteractionBox(ASpellInstance* Instance, FVector BoxExtent);
 	void CreateMovementComp(ASpellInstance* Instance, float Speed);
 	void CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* ParticleSystem);
-	
-	void IsInteraction(AActor* Actor, ASpellInstance* Instance);
 	
 	AActor* SpawnedActor = nullptr;
 };

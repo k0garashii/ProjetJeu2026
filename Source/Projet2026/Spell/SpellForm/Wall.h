@@ -23,4 +23,7 @@ public:
 	virtual void HandleSpellInteraction(ASpellInstance* Spell, ASpellInstance* Instance) override;
 	
 	void SpawnSpell(AActor* Actor, USpellData* SpellData);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Form")
+	float Health = 100.f;
 };
