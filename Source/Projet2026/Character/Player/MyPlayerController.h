@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "UI/PlayerWidget.h"
+#include "GAS_Spells/UI/PlayerWidget.h"
 #include "MyPlayerController.generated.h"
 
 class UInputMappingContext;
