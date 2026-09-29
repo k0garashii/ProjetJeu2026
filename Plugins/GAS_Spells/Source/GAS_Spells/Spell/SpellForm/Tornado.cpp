@@ -1,6 +1,8 @@
 #include "Tornado.h"
 #include "../SpellData.h"
 #include "../SpellInstance.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "NiagaraComponent.h"
 
 void UTornado::SetupInstance(ASpellInstance* Instance)

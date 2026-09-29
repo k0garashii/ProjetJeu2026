@@ -1,4 +1,5 @@
 #include "Wall.h"
+#include "Engine/World.h"
 #include "../SpellData.h"
 #include "../SpellInstance.h"
 

@@ -15,7 +15,7 @@ void UStatsSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& N
 void UStatsSet::ClampValue(const FGameplayAttribute& Attribute, float& Value) const
 {
 	if (Attribute == GetHealthAttribute())
-	{
 		Value = FMath::Clamp(Value, 0.f, this->GetMaxHealth());
-	}
+	if (Attribute == GetManaAttribute())
+		Value = FMath::Clamp(Value, 0.f, this->GetMaxMana());
 }

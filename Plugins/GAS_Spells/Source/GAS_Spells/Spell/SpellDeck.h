@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 #include "NativeGameplayTags.h"
 #include "SpellData.h"
 #include "SpellDeck.generated.h"

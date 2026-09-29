@@ -1,5 +1,7 @@
 #include "SpellForm.h"
 #include "../SpellInstance.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTagContainer.h"
 #include "NiagaraFunctionLibrary.h"
@@ -8,7 +10,6 @@
 #include "GAS_Spells/Character/PlayerCharacter.h"
 #include "GAS_Spells/Effects/DamageExecution.h"
 #include "GAS_Spells/Spell/SpellInteraction/SpellInteractionSubsystem.h"
-
 
 void USpellForm::CreateBoxCollisionOverlap(ASpellInstance* Instance, FVector BoxExtent)
 {
@@ -66,6 +67,13 @@ void USpellForm::CreateParticlesComp(ASpellInstance* Instance, UNiagaraSystem* N
 			EAttachLocation::KeepRelativeOffset, 
 			true
 		);
+	
+	if (!Instance->NiagaraComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CreateParticlesComp: NiagaraComponent is null"));
+	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("CreateParticlesComp: NiagaraComponent"));
 }
 
 void USpellForm::ApplyEffectsToTarget(AActor* Source, AActor* Target, int Damages) const

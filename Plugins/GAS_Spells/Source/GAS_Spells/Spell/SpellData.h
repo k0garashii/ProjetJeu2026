@@ -29,7 +29,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
 	TArray<TSubclassOf<UGameplayEffect>> OnHitEffects;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
-	float ManaCost;
+	int ManaCost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo")
 	TSubclassOf<UGameplayEffect> CostGameplayEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpellInfo|Visuals")

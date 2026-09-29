@@ -50,8 +50,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	UE_LOG(LogTemp, Warning, TEXT("Test"));
+	
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Test 2"));
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -63,6 +67,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		
 		EnhancedInputComponent->BindAction(RotateSpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::RotateSpell);
 	}
+	UE_LOG(
+	LogTemp,
+	Warning,
+	TEXT("MoveAction: %s | LookAction: %s"),
+	MoveAction ? *MoveAction->GetName() : TEXT("NULL"),
+	LookAction ? *LookAction->GetName() : TEXT("NULL")
+);
 }
 
 void APlayerCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -75,13 +86,13 @@ void APlayerCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
 void APlayerCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 	Super::OnManaChanged(Data);
-	UE_LOG(LogTemp, Warning, TEXT("Mana : %f"), Data.NewValue);
 	if (PlayerUI)
 		PlayerUI->UpdateManaBar(Data.NewValue, GetMaxMana());
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("In"));
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -91,6 +102,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("In"));
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
@@ -98,6 +110,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::SelectSpell(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("In"));
 	float InputValue = Value.Get<float>();
 	int32 SpellIndex = FMath::RoundToInt(InputValue) - 1;
 

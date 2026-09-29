@@ -40,6 +40,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	UAbilitySystemComponent* AbilitySystemComponent = nullptr;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	TArray<TSubclassOf<UGameplayEffect>> Effects;
+	
 	
 protected:
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
@@ -55,6 +58,8 @@ protected:
 	void InitMaxMana() const { stats->SetMaxMana(InitialMaxMana); }
 	void InitMagicalPower() const { stats->SetMagicalPower(InitialMPower); }
 	void InitMagicalResistance() const { stats->SetMagicalResistance(InitialMRes); }
+	
+	void InitializeEffects();
 
 private:
 	UPROPERTY()

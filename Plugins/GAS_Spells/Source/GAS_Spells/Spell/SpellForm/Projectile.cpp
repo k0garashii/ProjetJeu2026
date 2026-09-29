@@ -1,7 +1,9 @@
 #include "Projectile.h"
+
 #include "GAS_Spells/Character/PlayerCharacter.h"
 #include "../SpellInstance.h"
 #include "Camera/CameraComponent.h"
+#include "GAS_Spells/Character/EntityCharacter.h"
 
 void UProjectile::SetupInstance(ASpellInstance* Instance)
 {

@@ -11,13 +11,13 @@ struct FInteractionData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Interaction")
 	FGameplayTagContainer Elements;
 	
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	FGameplayTagContainer Forms; 
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Interaction")
 	USpellData* ResultSpell;
 };
 
@@ -72,7 +72,7 @@ class GAS_SPELLS_API USpellInteractionManager : public UDataAsset
 public:
 	virtual void PostLoad() override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Interaction")
 	TArray<FInteractionData> Rules;
 
 	TMap<FSpellFusionKey, USpellData*> FusionMap;

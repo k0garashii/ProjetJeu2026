@@ -1,5 +1,5 @@
 #include "SpellDeck.h"
-
+#include "GameplayEffect.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GAS_Spells/Character/EntityCharacter.h"
 
@@ -54,7 +54,10 @@ void USpellDeck::LaunchSpell(AActor* actor)
 		return;
 	
 	if (Character->GetMana() < ActiveSpell->ManaCost)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Enough Mana : \n Spell Cost : %d \nYour mana : %d"), ActiveSpell->ManaCost, Character->GetMana());
 		return;
+	}
 	
 	UpdateMana(Character);
 	
@@ -96,7 +99,7 @@ void USpellDeck::UpdateMana(ACharacter* Character)
 		
 		if (SpecHandle.IsValid())
 		{
-			SpecHandle.Data->SetSetByCallerMagnitude(TAG_Data_SpellCost, - ActiveSpell->ManaCost);
+			SpecHandle.Data->SetSetByCallerMagnitude(TAG_Data_SpellCost.GetTag(), -ActiveSpell->ManaCost);
 			SourceASC->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), SourceASC);
 		}
 	}

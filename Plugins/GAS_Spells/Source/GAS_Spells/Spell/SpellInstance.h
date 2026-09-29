@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ShapeComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "SpellForm/SpellForm.h"
@@ -26,13 +27,13 @@ public:
 	
 	USpellData* GetSpellData() const { return SpellData; }
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	UProjectileMovementComponent* ProjectileMovement;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	UShapeComponent* DetectionComponent;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	UShapeComponent* InteractionComponent;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	UNiagaraComponent* NiagaraComponent;
 	
 	UPROPERTY()

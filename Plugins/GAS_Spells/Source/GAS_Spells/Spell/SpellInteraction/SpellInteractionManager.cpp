@@ -6,11 +6,13 @@ void USpellInteractionManager::PostLoad()
 	BuildFusionMap();
 }
 
+#if WITH_EDITOR
 void USpellInteractionManager::PostEditChangeProperty(FPropertyChangedEvent& Event)
 {
 	Super::PostEditChangeProperty(Event);
 	BuildFusionMap();
 }
+#endif
 
 USpellData* USpellInteractionManager::GetFusionResult(FGameplayTagContainer& Elements, const FGameplayTagContainer& Forms)
 {

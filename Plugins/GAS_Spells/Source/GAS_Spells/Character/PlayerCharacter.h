@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Logging/LogMacros.h"
 #include "AbilitySystemInterface.h"
+#include "InputMappingContext.h"
 #include "GAS_Spells/Spell/SpellDeck.h"
 #include "GAS_Spells/Character/EntityCharacter.h"
 #include "GAS_Spells/UI/PlayerWidget.h"
@@ -68,6 +69,9 @@ public:
 	
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputMappingContext* DefaultMappingContext;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerWidget> PlayerWidgetClass;

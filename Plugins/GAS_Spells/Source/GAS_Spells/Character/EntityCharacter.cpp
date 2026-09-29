@@ -1,5 +1,7 @@
 #include "EntityCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+
 
 AEntityCharacter::AEntityCharacter()
 {
@@ -8,7 +10,6 @@ AEntityCharacter::AEntityCharacter()
 	stats = CreateDefaultSubobject<UStatsSet>("StatsSet");
 }
 
-
 void AEntityCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -16,6 +17,7 @@ void AEntityCharacter::BeginPlay()
 	Init();
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(stats->GetHealthAttribute()).AddUObject(this, &AEntityCharacter::OnHealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(stats->GetManaAttribute()).AddUObject(this, &AEntityCharacter::OnManaChanged);
+	InitializeEffects();
 }
 
 void AEntityCharacter::Tick(float DeltaTime)
@@ -38,10 +40,25 @@ void AEntityCharacter::Init()
 {
 	InitMaxHealth();
 	InitHealth();
-	InitMana();
 	InitMaxMana();
+	InitMana();
 	InitMagicalPower();
 	InitMagicalResistance();
+}
+
+void AEntityCharacter::InitializeEffects()
+{
+	if (UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(this))
+	{
+		FGameplayEffectContextHandle ContextHandle = SourceASC->MakeEffectContext();
+		for (const TSubclassOf<UGameplayEffect>& effect : Effects)
+		{
+			FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(effect, 1.f, ContextHandle);
+			
+			if (SpecHandle.IsValid())
+				SourceASC->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), SourceASC);
+		}
+	}
 }
 
 void AEntityCharacter::Deactivate()
