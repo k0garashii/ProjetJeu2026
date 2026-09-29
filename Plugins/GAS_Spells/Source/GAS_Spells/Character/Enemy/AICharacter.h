@@ -20,7 +20,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	UWidgetComponent* HealthBar;
 	UPROPERTY()
 	UHealthBarWidget* HealthWidget;

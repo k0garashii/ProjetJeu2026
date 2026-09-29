@@ -51,11 +51,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	UE_LOG(LogTemp, Warning, TEXT("Test"));
 	
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Test 2"));
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -67,13 +65,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		
 		EnhancedInputComponent->BindAction(RotateSpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::RotateSpell);
 	}
-	UE_LOG(
-	LogTemp,
-	Warning,
-	TEXT("MoveAction: %s | LookAction: %s"),
-	MoveAction ? *MoveAction->GetName() : TEXT("NULL"),
-	LookAction ? *LookAction->GetName() : TEXT("NULL")
-);
 }
 
 void APlayerCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -92,25 +83,18 @@ void APlayerCharacter::OnManaChanged(const FOnAttributeChangeData& Data)
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("In"));
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	// route the input
 	DoMove(MovementVector.X, MovementVector.Y);
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("In"));
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
 
 void APlayerCharacter::SelectSpell(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("In"));
 	float InputValue = Value.Get<float>();
 	int32 SpellIndex = FMath::RoundToInt(InputValue) - 1;
 
@@ -156,17 +140,11 @@ void APlayerCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController() != nullptr)
 	{
-		// find out which way is forward
 		const FRotator Rotation = GetController()->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
 		AddMovementInput(ForwardDirection, Forward);
 		AddMovementInput(RightDirection, Right);
 	}
