@@ -92,7 +92,7 @@ FQuat UProjectile::SetRotation(UWorld* world, AActor* actor, const FVector& Spel
 {
 	FHitResult hitResult;
 	FCollisionQueryParams Parameters;
-	Parameters.AddIgnoredActor(actor);
+	// Parameters.AddIgnoredActor(actor);
 
 	FVector Start;
 	FVector End;
@@ -112,10 +112,7 @@ FQuat UProjectile::SetRotation(UWorld* world, AActor* actor, const FVector& Spel
 	FVector TargetPoint;
 
 	if (world->LineTraceSingleByChannel(hitResult, Start, End, ECC_Visibility, Parameters))
-	{
 		TargetPoint = hitResult.Location;
-	}
-	
 	else
 		TargetPoint = End;
 
